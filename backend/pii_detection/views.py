@@ -7,6 +7,8 @@ from .desensitize import simple_desensitize
 from rest_framework.decorators import api_view
 import re
 import unicodedata
+from opencc import OpenCC
+from dateutil import parser as date_parser
 
 @api_view(["POST"])
 def desensitize_view(request):
@@ -79,6 +81,37 @@ class PiiDetectView(APIView):
         original_text = text
 
         # 1. 基础字符标准化
+        # 去除HTML标签
+        text = re.sub(r'<[^>]+>', '', text)
+        
+        # 去除噪音字符（###, ***, 等）
+        text = re.sub(r'[#*]{3,}', '', text)
+        
+        # 保护科学计数法格式，使用占位符
+        scientific_notations = []
+        def protect_scientific_notation(match):
+            placeholder = f"__SCIENTIFIC_{len(scientific_notations)}__"
+            scientific_notations.append(match.group(0))
+            return placeholder
+
+        text = re.sub(r'(\d+(?:\.\d+)?)\s*×\s*10\s*[⁰¹²³⁴⁵⁶⁷⁸⁹]+', protect_scientific_notation, text)
+        
+        # 标准化数学符号
+        math_symbols = {
+            '≥': '>=',
+            '≤': '<=',
+            '≠': '!=', 
+            '≈': '≈',
+            '±': '±', 
+            '∞': '∞', 
+            '∑': '∑', 
+            '∫': '∫', 
+            '√': '√', 
+        }
+        
+        for symbol, replacement in math_symbols.items():
+            text = text.replace(symbol, replacement)
+        
         text = unicodedata.normalize('NFKC', text)
         text = text.replace('\r\n', '\n').replace('\r', '\n')
 
@@ -88,6 +121,9 @@ class PiiDetectView(APIView):
         text = text.strip()
 
         # 2. 标点符号处理（只保留逗号，清理重复标点）
+        text = re.sub(r'[!]{2,}', '!', text)
+        text = re.sub(r'[?]{2,}', '?', text)
+        text = re.sub(r'[;]{2,}', ';', text)
         text = re.sub(r'[！]{2,}', '！', text)
         text = re.sub(r'[？]{2,}', '？', text) 
         text = re.sub(r'[；]{2,}', '；', text) 
@@ -95,45 +131,21 @@ class PiiDetectView(APIView):
 
         # 3. 数字和日期标准化
         text = re.sub(r'(?<=\d)[,，](?=\d)', '', text)
-
-        # 4. 医学专业术语处理
-        drug_mappings = {
-            '阿司匹林肠溶片': '阿司匹林',
-            '布洛芬缓释胶囊': '布洛芬',
-            '对乙酰氨基酚片': '对乙酰氨基酚'
-        }
-        for brand, generic in drug_mappings.items():
-            if brand in text:
-                text = text.replace(brand, generic)
-
-        disease_mappings = {
-            '高血压病': '高血压',
-            '糖尿病 mellitus': '糖尿病',
-            '冠心病': '冠状动脉粥样硬化性心脏病'
-        }
-        for synonym, standard in disease_mappings.items():
-            if synonym in text:
-                text = text.replace(synonym, standard)
         
-        # 5. 句子分割和段落处理
+        # 4. 句子分割和段落处理
         sentences = re.split(r'(?:[。！？；?!;]|…|\.\.\.|\n)+', text)
         sentences = [s.strip() for s in sentences if s.strip()]
 
         paragraphs = text.split('\n\n')
         paragraphs = [p.strip() for p in paragraphs if p.strip()]
         
-        # 6. 特殊格式处理
+        # 5. 特殊格式处理
         text = re.sub(r'第\s*\d+\s*页', '', text)
         text = re.sub(r'Page\s*\d+', '', text)
         
-        # 7. 语言和编码处理
-        traditional_to_simplified = {
-            '醫': '医', '藥': '药', '診': '诊', '療': '疗',
-            '檢': '检', '驗': '验', '報': '报', '告': '告'
-        }
-        for traditional, simplified in traditional_to_simplified.items():
-            if traditional in text:
-                text = text.replace(traditional, simplified)
+        # 6. 语言和编码处理
+        cc = OpenCC('t2s')  # Traditional to Simplified
+        text = cc.convert(text)
 
         sentence_end_pattern = r'(?:[。！？；?!;]|…|\.\.\.|\n)+'
         raw_sentences = re.split(sentence_end_pattern, text)
@@ -145,20 +157,57 @@ class PiiDetectView(APIView):
             # 统一逗号为中文逗号
             s = s.replace(',', '，')
 
-            s = re.sub(r"[、:\"“”'（）()【】\[\]]", '', s)
-            # 将多种日期格式统一为 YYYYMMDD
-            def _normalize_date(m):
-                y, mth, d = m.group(1), m.group(2), m.group(3)
-                return f"{y}{int(mth):02d}{int(d):02d}"
+            # 使用 datetime 处理日期标准化（在删除空格之前）
+            def _normalize_date_with_datetime(date_str):
+                """使用 dateutil.parser 解析各种日期格式"""
+                try:
+                    original_str = date_str.strip()
 
-            s = re.sub(r"(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*(?:日|号)", _normalize_date, s)
-            s = re.sub(r"(\d{4})\s*[-/.]\s*(\d{1,2})\s*[-/.]\s*(\d{1,2})", _normalize_date, s)
+                    try:
+                        # 标准解析
+                        dt = date_parser.parse(original_str)
+                    except:
+                        try:
+                            dt = date_parser.parse(original_str, dayfirst=True)
+                        except:
+                            dt = date_parser.parse(original_str, fuzzy=True)
+                    
+                    return dt.strftime('%Y-%m-%d') 
+                except Exception as e:
+                    return date_str
+            
+            # 统一日期匹配模式
+            date_pattern = re.compile(
+                r'\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*[日号]|'  # 中文格式：2024年1月2日
+                r'\b(?:19|20)\d{2}\s*[-/.]\s*(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:0?[1-9]|[12]\d|3[01])\b|'   # YYYY-MM-DD 格式：2024-01-02，限制年份为19xx或20xx
+                r'(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s*\d{1,2}[，,]?\s*\d{4}|' # Mon DD YYYY：Jan 22, 2025 或 Jan 22， 2025
+                r'\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{4}|' # DD Mon YYYY：22 Jan 2025
+                r'(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\d{1,2}\d{4}|' # MonDDYYYY：Jan222025
+                r'\d{1,2}(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\d{4}|' # DDMonYYYY：22Aug2025
+                r'\b(?:19|20)\d{6}\b', # YYYYMMDD 格式：20241231，限制年份为19xx或20xx
+                flags=re.IGNORECASE
+            )
+
+            # 保护括号内的内容不被删除
+            s = s.replace('（', '(').replace('）', ')')
+            
+            # 暂时保留括号和冒号，只去除其他标点
+            s = re.sub(r"[、\"\"''【】\[\]]", '', s)
             
             # 去除电话号码等中的连字符（不影响已处理的日期）
             s = re.sub(r'(?<=\d)[\-–—]+(?=\d)', '', s)
-            s = re.sub(r'\s+', '', s)
+
+            s = date_pattern.sub(lambda m: _normalize_date_with_datetime(m.group(0)), s)
+
+            # 最后处理：将多个连续空格替换为单个空格
+            s = re.sub(r'\s+', ' ', s)
             normalized_sentences.append(s)
         standardized_text = '[' + ', '.join([f"'{s}'" for s in normalized_sentences]) + ']'
+        
+        # 恢复科学计数法占位符
+        for i, scientific_notation in enumerate(scientific_notations):
+            placeholder = f"__SCIENTIFIC_{i}__"
+            standardized_text = standardized_text.replace(placeholder, scientific_notation)
         
         return {
             'normalized_text': standardized_text,  # 主要输出：标准化文本
