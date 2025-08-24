@@ -9,6 +9,17 @@ import re
 import unicodedata
 from opencc import OpenCC
 from dateutil import parser as date_parser
+import os
+import json
+from datetime import datetime
+try:
+    import jieba
+    JIEBA_AVAILABLE = True
+    # 初始化jieba
+    jieba.initialize()
+except ImportError:
+    JIEBA_AVAILABLE = False
+    logger.warning("jieba 未安装，将使用简单分词")
 
 @api_view(["POST"])
 def desensitize_view(request):
@@ -75,7 +86,12 @@ class PiiDetectView(APIView):
                 'sentences': [],
                 'paragraphs': [],
                 'original_length': 0,
-                'normalized_length': 2
+                'normalized_length': 2,
+                'structured_text': {
+                    'structured_text': '[]',
+                    'tokenized_sentences': [],
+                    'sentence_count': 0
+                }
             }
         
         original_text = text
@@ -202,20 +218,204 @@ class PiiDetectView(APIView):
             # 最后处理：将多个连续空格替换为单个空格
             s = re.sub(r'\s+', ' ', s)
             normalized_sentences.append(s)
-        standardized_text = '[' + ', '.join([f"'{s}'" for s in normalized_sentences]) + ']'
+        standardized_text = '[' + ','.join([f"'{s}'" for s in normalized_sentences]) + ']'
         
         # 恢复科学计数法占位符
         for i, scientific_notation in enumerate(scientific_notations):
             placeholder = f"__SCIENTIFIC_{i}__"
             standardized_text = standardized_text.replace(placeholder, scientific_notation)
         
+        # 7. 分词分句处理（根据图2中的方法）
+        structured_text = self.tokenize_and_segment(standardized_text)
+        
         return {
             'normalized_text': standardized_text,  # 主要输出：标准化文本
             'sentences': sentences,                # 按句分割的文本列表
             'paragraphs': paragraphs,              # 段落列表
             'original_length': len(original_text),
-            'normalized_length': len(standardized_text)
+            'normalized_length': len(standardized_text),
+            'structured_text': structured_text     # 新增：结构化文本（分词分句结果）
         }
+
+    def tokenize_and_segment(self, standardized_text: str) -> dict:
+        """
+        对标准化文本进行分词分句处理
+        使用 spaCy + LTP 工具，按照中文能够理解的方式进行分词
+        """
+        try:
+            # 解析标准化文本（去除外层方括号和引号）
+            text_content = standardized_text.strip()
+            if text_content.startswith('[') and text_content.endswith(']'):
+                text_content = text_content[1:-1]
+            
+            # 分割句子（按英文逗号分隔的字符串）
+            sentences = []
+            current_sentence = ""
+            in_quotes = False
+            
+            for char in text_content:
+                if char == "'" and (not current_sentence or current_sentence[-1] != '\\'):
+                    in_quotes = not in_quotes
+                elif char == ',' and not in_quotes:
+                    if current_sentence.strip():
+                        # 去除引号
+                        sentence = current_sentence.strip().strip("'")
+                        sentences.append(sentence)
+                    current_sentence = ""
+                else:
+                    current_sentence += char
+            
+            # 处理最后一个句子
+            if current_sentence.strip():
+                sentence = current_sentence.strip().strip("'")
+                sentences.append(sentence)
+            
+            # 初始化分词工具
+            jieba_seg = None
+            
+            if JIEBA_AVAILABLE:
+                try:
+                    jieba_seg = jieba
+                    logger.info("✅ jieba 加载成功")
+                except Exception as e:
+                    logger.warning(f"❌ jieba 加载失败: {e}")
+                    jieba_seg = None
+            else:
+                logger.info("jieba 不可用，使用简单分词")
+            
+            # 对每个句子进行分词
+            tokenized_sentences = []
+            for sentence in sentences:
+                if not sentence.strip():
+                    continue
+                
+                # 分词处理
+                if jieba_seg:
+                    try:
+                        # 使用 jieba 进行分词
+                        jieba_tokens = list(jieba_seg.cut(sentence))
+                        logger.info(f"jieba分词结果: {jieba_tokens}")
+                        final_tokens = jieba_tokens
+                    except Exception as e:
+                        logger.warning(f"jieba分词失败: {e}")
+                        final_tokens = self.simple_tokenize(sentence)  # 回退到简单分词
+                else:
+                    final_tokens = self.simple_tokenize(sentence)  # 使用简单分词
+                
+                # 清理分词结果：删除空格、冒号、括号等字符
+                cleaned_tokens = []
+                for token in final_tokens:
+                    # 删除空格、冒号、括号等字符
+                    cleaned_token = re.sub(r'[\s:：()（）【】\[\]]', '', token)
+                    if cleaned_token:  # 只保留非空token
+                        cleaned_tokens.append(cleaned_token)
+                
+                # 将分词结果格式化为图2中的格式（每个句子只有一个方括号）
+                if cleaned_tokens:
+                    tokenized_sentence = "['" + "', '".join(cleaned_tokens) + "']"
+                    tokenized_sentences.append(tokenized_sentence)
+            
+            # 创建完整的结构化文本（句子之间用][连接，不添加外层方括号）
+            if tokenized_sentences:
+                structured_text = "".join(tokenized_sentences)
+            else:
+                structured_text = ""
+            
+            logger.info(f"分词分句完成，句子数量: {len(tokenized_sentences)}")
+            logger.info(f"结构化文本示例: {structured_text[:200]}...")
+            
+            # 保存结构化文本到文件
+            self.save_structured_text(structured_text)
+            
+            return {
+                'structured_text': structured_text,
+                'tokenized_sentences': tokenized_sentences,
+                'sentence_count': len(tokenized_sentences)
+            }
+            
+        except Exception as e:
+            logger.error(f"分词分句处理失败: {e}")
+            import traceback
+            logger.error(f"详细错误信息: {traceback.format_exc()}")
+            return {
+                'structured_text': standardized_text,
+                'tokenized_sentences': [],
+                'sentence_count': 0,
+                'error': str(e)
+            }
+
+    def simple_tokenize(self, text: str) -> list:
+        """
+        简单的分词方法，作为 jieba 的回退方案
+        按照中文标点符号和空格进行基本分词
+        """
+        if not text:
+            return []
+        
+        # 定义中文标点符号
+        chinese_punct = '，。！？；：""''（）【】、'
+        
+        # 按标点符号分割
+        tokens = []
+        current_token = ""
+        
+        for char in text:
+            if char in chinese_punct:
+                if current_token.strip():
+                    tokens.append(current_token.strip())
+                # 不保留标点符号作为独立token
+                current_token = ""
+            elif char.isspace():
+                if current_token.strip():
+                    tokens.append(current_token.strip())
+                current_token = ""
+            else:
+                current_token += char
+        
+        # 处理最后一个token
+        if current_token.strip():
+            tokens.append(current_token.strip())
+        
+        # 过滤空token
+        tokens = [token for token in tokens if token.strip()]
+        
+        # 如果没有分割出任何token，返回原文本
+        if not tokens:
+            tokens = [text]
+        
+        logger.info(f"简单分词结果: {tokens}")
+        return tokens
+
+    def save_structured_text(self, structured_text: str):
+        """
+        保存结构化文本到文件
+        文件名格式：病例文本_时间戳
+        保存路径：/backend/knowledge_base/text/
+        """
+        try:
+            # 创建输出目录
+            output_dir = "/backend/knowledge_base/text/"
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # 生成文件名（时间戳格式）
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"病例文本_{timestamp}.json"
+            filepath = os.path.join(output_dir, filename)
+            
+            # 保存结构化文本
+            data = {
+                'timestamp': timestamp,
+                'structured_text': structured_text,
+                'created_at': datetime.now().isoformat()
+            }
+            
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            
+            logger.info(f"结构化文本已保存到: {filepath}")
+            
+        except Exception as e:
+            logger.error(f"保存结构化文本失败: {e}")
 
     def post(self, request):
         text = request.data.get("text", None)
@@ -269,5 +469,6 @@ class PiiDetectView(APIView):
             "summary": summary,
             "details": result.get("details", []),
             "text": extracted_text,
-            "normalized_text": normalized_result
+            "normalized_text": normalized_result,
+            "structured_text": normalized_result.get('structured_text', {})
         }, status=status.HTTP_201_CREATED)
