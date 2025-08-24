@@ -12,14 +12,150 @@ from dateutil import parser as date_parser
 import os
 import json
 from datetime import datetime
-try:
-    import jieba
-    JIEBA_AVAILABLE = True
-    # 初始化jieba
-    jieba.initialize()
-except ImportError:
-    JIEBA_AVAILABLE = False
-    logger.warning("jieba 未安装，将使用简单分词")
+
+# 文本处理工具类
+class TextProcessingTools:
+    _instance = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._initialized = False
+        return cls._instance
+    
+    def __init__(self):
+        if self._initialized:
+            return
+        
+        # 初始化LTP和spaCy PhraseMatcher
+        logger = logging.getLogger(__name__)
+        
+        # 初始化LTP分词器
+        try:
+            from ltp import LTP
+            self.ltp = LTP()  # 使用默认参数
+            self.ltp_available = True
+            logger.info("✅ LTP 初始化成功")
+        except (ImportError, Exception) as e:
+            self.ltp = None
+            self.ltp_available = False
+            logger.warning(f"LTP 初始化失败: {e}")
+        
+        # 初始化spaCy PhraseMatcher（仅用于术语匹配）
+        try:
+            import spacy
+            from spacy.matcher import PhraseMatcher
+            
+            # 创建空的英文模型用于PhraseMatcher
+            self.nlp = spacy.blank("zh")
+            
+            # 初始化短语匹配器
+            self.matcher = PhraseMatcher(self.nlp.vocab, attr="TEXT")
+            
+            # 医学术语和单位列表（暂时禁用用于测试LTP原始分词）
+            # medical_terms = [
+            #     # 医学单位
+            #     'mg/L', 'μg/mL', 'mmHg', 'U/L', 'μmol/L', 'g/L', 'mmol/L',
+            #     '次/分', '°C', 'kg/m²', 'mL/min', 'ng/mL', 'pg/mL', 'IU/L',
+            #     '×10⁹/L', '×10¹²/L', 'mg/dL', 'g/dL', 'mEq/L', 'mg/kg',
+            #     'mg/m²', 'μg/kg', 'IU/mL', 'pmol/L', 'nmol/L', 'mol/L',
+            #     # 医学术语
+            #     '急性淋巴细胞白血病', 'ST段抬高', '肺动脉导管', '心肌梗死',
+            #     '高血压', '糖尿病', '冠心病', '脑梗死', '肺炎', '肝硬化',
+            #     '慢性肾病', '甲状腺功能亢进', '类风湿关节炎', '系统性红斑狼疮',
+            #     # 检查项目
+            #     '心电图', '胸部CT', 'MRI', '超声心动图', '血常规', '肝功能',
+            #     '肾功能', '血糖', '血脂', '甲状腺功能', '肿瘤标志物'
+            # ]
+            # 
+            # # 将术语转换为Doc对象并添加到匹配器
+            # patterns = [self.nlp.make_doc(term) for term in medical_terms]
+            # self.matcher.add("MEDICAL_TERMS", patterns)
+            
+            self.spacy_available = True
+            logger.info("✅ spaCy PhraseMatcher 初始化成功（医学术语匹配已禁用）")
+            
+        except ImportError as e:
+            self.nlp = None
+            self.matcher = None
+            self.spacy_available = False
+            logger.warning(f"spaCy 初始化失败: {e}，将无法使用术语匹配")
+        
+        # 初始化OpenCC
+        self.opencc = OpenCC('t2s')
+        
+        # 预编译正则表达式
+        self._compile_regex_patterns()
+        
+        self._initialized = True
+    
+    def _compile_regex_patterns(self):
+        """预编译所有正则表达式"""
+        # HTML标签
+        self.html_tag_pattern = re.compile(r'<[^>]+>')
+        
+        # 噪音字符
+        self.noise_pattern = re.compile(r'[#*]{3,}')
+        
+        # 科学计数法
+        self.scientific_pattern = re.compile(r'(\d+(?:\.\d+)?)\s*×\s*10\s*[⁰¹²³⁴⁵⁶⁷⁸⁹]+')
+        
+        # 空白字符处理
+        self.whitespace_pattern = re.compile(r'[^\S\n]+')
+        self.newline_space_pattern = re.compile(r' *\n *')
+        
+        # 重复标点符号
+        self.repeat_punct_patterns = {
+            'exclamation': re.compile(r'[!]{2,}'),
+            'question': re.compile(r'[?]{2,}'),
+            'semicolon': re.compile(r'[;]{2,}'),
+            'chinese_exclamation': re.compile(r'[！]{2,}'),
+            'chinese_question': re.compile(r'[？]{2,}'),
+            'chinese_semicolon': re.compile(r'[；]{2,}'),
+            'other_punct': re.compile(r'[，、：""''（）【】]{2,}')
+        }
+        
+        # 数字中的逗号
+        self.number_comma_pattern = re.compile(r'(?<=\d)[,，](?=\d)')
+        
+        # 句子分割
+        self.sentence_split_pattern = re.compile(r'(?:[。！？；?!;]|…|\.\.\.|\\n|\n)+')
+        
+        # 页码
+        self.page_patterns = {
+            'chinese': re.compile(r'第\s*\d+\s*页'),
+            'english': re.compile(r'Page\s*\d+')
+        }
+        
+        # 时间格式保护
+        self.time_pattern = re.compile(r'\b\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?\b', re.IGNORECASE)
+        
+        # 其他标点删除
+        self.punct_remove_pattern = re.compile(r'[、:""''【】\[\]]')
+        
+        # 日期格式
+        self.date_pattern = re.compile(
+            r'\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*[日号]|'  # 中文格式
+            r'\b(?:19|20)\d{2}\s*[-/.]\s*(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:0?[1-9]|[12]\d|3[01])\b|'   # YYYY-MM-DD
+            r'(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s*\d{1,2}[，,]?\s*\d{4}|' # Mon DD YYYY
+            r'\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{4}|' # DD Mon YYYY
+            r'(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\d{1,2}\d{4}|' # MonDDYYYY
+            r'\d{1,2}(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\d{4}|' # DDMonYYYY
+            r'\b(?:19|20)\d{6}\b', # YYYYMMDD
+            re.IGNORECASE
+        )
+        
+        # 连字符
+        self.hyphen_pattern = re.compile(r'(?<=\d)[\-–—]+(?=\d)')
+        
+        # 多空格
+        self.multi_space_pattern = re.compile(r'\s+')
+        
+        # 中文标点符号（用于简单分词）
+        self.chinese_punct = '，。！？；：""''（）【】、'
+
+# 全局工具实例
+text_tools = TextProcessingTools()
 
 @api_view(["POST"])
 def desensitize_view(request):
@@ -46,6 +182,7 @@ def desensitize_view(request):
         "entities": entities,
         "desensitized_text": desensitized_text
     }, status=status.HTTP_200_OK)
+    
 from .models import PiiDetectionRecord
 from .serializers import PiiDetectionRecordSerializer
 
@@ -79,247 +216,196 @@ class PiiDetectView(APIView):
             raise ValueError('Unsupported file type')
 
     def normalize_text(self, text: str) -> dict:
-
+        """文本标准化主函数"""
         if not text:
-            return {
-                'normalized_text': '[]',
-                'sentences': [],
-                'paragraphs': [],
-                'original_length': 0,
-                'normalized_length': 2,
-                'structured_text': {
-                    'structured_text': '[]',
-                    'tokenized_sentences': [],
-                    'sentence_count': 0
-                }
-            }
+            return self._get_empty_result()
         
         original_text = text
-
-        # 1. 基础字符标准化
-        # 去除HTML标签
-        text = re.sub(r'<[^>]+>', '', text)
         
-        # 去除噪音字符（###, ***, 等）
-        text = re.sub(r'[#*]{3,}', '', text)
+        # 1. 基础清理和标准化
+        text, scientific_notations = self._basic_cleanup(text)
         
-        # 保护科学计数法格式，使用占位符
+        # 2. 句子和段落分割（用于返回结果）
+        sentences = text_tools.sentence_split_pattern.split(text)
+        sentences = [s.strip() for s in sentences if s.strip()]
+        paragraphs = text.split('\n\n')
+        paragraphs = [p.strip() for p in paragraphs if p.strip()]
+        
+        # 3. 深度处理每个句子
+        normalized_sentences = self._process_sentences(text)
+        
+        # 4. 构建标准化文本
+        standardized_text = '[' + ','.join([f"'{s}'" for s in normalized_sentences]) + ']'
+        
+        # 5. 恢复占位符
+        standardized_text = self._restore_placeholders(standardized_text, scientific_notations)
+        
+        # 6. 分词分句处理
+        structured_text = self.tokenize_and_segment(standardized_text)
+        
+        return {
+            'normalized_text': standardized_text,
+            'sentences': sentences,
+            'paragraphs': paragraphs,
+            'original_length': len(original_text),
+            'normalized_length': len(standardized_text),
+            'structured_text': structured_text
+        }
+    
+    def _get_empty_result(self) -> dict:
+        """返回空文本的标准结果"""
+        return {
+            'normalized_text': '[]',
+            'sentences': [],
+            'paragraphs': [],
+            'original_length': 0,
+            'normalized_length': 2,
+            'structured_text': {
+                'structured_text': '[]',
+                'tokenized_sentences': [],
+                'sentence_count': 0
+            }
+        }
+    
+    def _basic_cleanup(self, text: str) -> tuple:
+        """基础文本清理"""
+        # 去除HTML标签和噪音字符
+        text = text_tools.html_tag_pattern.sub('', text)
+        text = text_tools.noise_pattern.sub('', text)
+        
+        # 保护科学计数法
         scientific_notations = []
         def protect_scientific_notation(match):
             placeholder = f"__SCIENTIFIC_{len(scientific_notations)}__"
             scientific_notations.append(match.group(0))
             return placeholder
-
-        text = re.sub(r'(\d+(?:\.\d+)?)\s*×\s*10\s*[⁰¹²³⁴⁵⁶⁷⁸⁹]+', protect_scientific_notation, text)
+        text = text_tools.scientific_pattern.sub(protect_scientific_notation, text)
         
         # 标准化数学符号
         math_symbols = {
-            '≥': '>=',
-            '≤': '<=',
-            '≠': '!=', 
-            '≈': '≈',
-            '±': '±', 
-            '∞': '∞', 
-            '∑': '∑', 
-            '∫': '∫', 
-            '√': '√', 
+            '≥': '>=', '≤': '<=', '≠': '!=', '≈': '≈',
+            '±': '±', '∞': '∞', '∑': '∑', '∫': '∫', '√': '√'
         }
-        
         for symbol, replacement in math_symbols.items():
             text = text.replace(symbol, replacement)
         
+        # Unicode标准化和换行符处理
         text = unicodedata.normalize('NFKC', text)
         text = text.replace('\r\n', '\n').replace('\r', '\n')
-
-        # 空白字符统一（保留换行符，仅折叠其它空白）
-        text = re.sub(r'[^\S\n]+', ' ', text)
-        text = re.sub(r' *\n *', '\n', text)
+        
+        # 空白字符统一
+        text = text_tools.whitespace_pattern.sub(' ', text)
+        text = text_tools.newline_space_pattern.sub('\n', text)
         text = text.strip()
-
-        # 2. 标点符号处理（只保留逗号，清理重复标点）
-        text = re.sub(r'[!]{2,}', '!', text)
-        text = re.sub(r'[?]{2,}', '?', text)
-        text = re.sub(r'[;]{2,}', ';', text)
-        text = re.sub(r'[！]{2,}', '！', text)
-        text = re.sub(r'[？]{2,}', '？', text) 
-        text = re.sub(r'[；]{2,}', '；', text) 
-        text = re.sub(r'[，、：""''（）【】]{2,}', lambda m: m.group()[0], text)
-
-        # 3. 数字和日期标准化
-        text = re.sub(r'(?<=\d)[,，](?=\d)', '', text)
         
-        # 4. 句子分割和段落处理
-        sentences = re.split(r'(?:[。！？；?!;]|…|\.\.\.|\n)+', text)
-        sentences = [s.strip() for s in sentences if s.strip()]
-
-        paragraphs = text.split('\n\n')
-        paragraphs = [p.strip() for p in paragraphs if p.strip()]
+        # 标点符号处理
+        for pattern_name, pattern in text_tools.repeat_punct_patterns.items():
+            if pattern_name == 'other_punct':
+                text = pattern.sub(lambda m: m.group()[0], text)
+            else:
+                text = pattern.sub(lambda m: m.group()[0], text)
         
-        # 5. 特殊格式处理
-        text = re.sub(r'第\s*\d+\s*页', '', text)
-        text = re.sub(r'Page\s*\d+', '', text)
+        # 数字中的逗号
+        text = text_tools.number_comma_pattern.sub('', text)
         
-        # 6. 语言和编码处理
-        cc = OpenCC('t2s')  # Traditional to Simplified
-        text = cc.convert(text)
-
-        sentence_end_pattern = r'(?:[。！？；?!;]|…|\.\.\.|\n)+'
-        raw_sentences = re.split(sentence_end_pattern, text)
+        # 页码处理
+        for pattern in text_tools.page_patterns.values():
+            text = pattern.sub('', text)
+        
+        # 繁体转简体
+        text = text_tools.opencc.convert(text)
+        
+        return text, scientific_notations
+    
+    def _process_sentences(self, text: str) -> list:
+        """处理句子级别的标准化"""
+        raw_sentences = text_tools.sentence_split_pattern.split(text)
         normalized_sentences = []
+        
         for s in raw_sentences:
             s = s.strip()
             if not s:
                 continue
+            
             # 统一逗号为中文逗号
             s = s.replace(',', '，')
-
-            # 使用 datetime 处理日期标准化（在删除空格之前）
-            def _normalize_date_with_datetime(date_str):
-                """使用 dateutil.parser 解析各种日期格式"""
-                try:
-                    original_str = date_str.strip()
-
-                    try:
-                        # 标准解析
-                        dt = date_parser.parse(original_str)
-                    except:
-                        try:
-                            dt = date_parser.parse(original_str, dayfirst=True)
-                        except:
-                            dt = date_parser.parse(original_str, fuzzy=True)
-                    
-                    return dt.strftime('%Y-%m-%d') 
-                except Exception as e:
-                    return date_str
             
-            # 统一日期匹配模式
-            date_pattern = re.compile(
-                r'\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*[日号]|'  # 中文格式：2024年1月2日
-                r'\b(?:19|20)\d{2}\s*[-/.]\s*(?:0?[1-9]|1[0-2])\s*[-/.]\s*(?:0?[1-9]|[12]\d|3[01])\b|'   # YYYY-MM-DD 格式：2024-01-02，限制年份为19xx或20xx
-                r'(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s*\d{1,2}[，,]?\s*\d{4}|' # Mon DD YYYY：Jan 22, 2025 或 Jan 22， 2025
-                r'\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{4}|' # DD Mon YYYY：22 Jan 2025
-                r'(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\d{1,2}\d{4}|' # MonDDYYYY：Jan222025
-                r'\d{1,2}(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\d{4}|' # DDMonYYYY：22Aug2025
-                r'\b(?:19|20)\d{6}\b', # YYYYMMDD 格式：20241231，限制年份为19xx或20xx
-                flags=re.IGNORECASE
-            )
-
-            # 保护括号内的内容不被删除
+            # 保护括号
             s = s.replace('（', '(').replace('）', ')')
             
-            # 暂时保留括号和冒号，只去除其他标点
-            s = re.sub(r"[、\"\"''【】\[\]]", '', s)
+            # 时间格式保护
+            time_colons = []
+            def protect_time_colon(match):
+                placeholder = f"__TIME_COLON_{len(time_colons)}__"
+                time_colons.append(match.group(0))
+                return placeholder
             
-            # 去除电话号码等中的连字符（不影响已处理的日期）
-            s = re.sub(r'(?<=\d)[\-–—]+(?=\d)', '', s)
-
-            s = date_pattern.sub(lambda m: _normalize_date_with_datetime(m.group(0)), s)
-
-            # 最后处理：将多个连续空格替换为单个空格
-            s = re.sub(r'\s+', ' ', s)
+            s = text_tools.time_pattern.sub(protect_time_colon, s)
+            
+            # 删除其他标点
+            s = text_tools.punct_remove_pattern.sub('', s)
+            
+            # 恢复时间格式
+            for i, time_colon in enumerate(time_colons):
+                placeholder = f"__TIME_COLON_{i}__"
+                s = s.replace(placeholder, time_colon)
+            
+            # 日期标准化
+            s = text_tools.date_pattern.sub(lambda m: self._normalize_date_with_datetime(m.group(0)), s)
+            
+            # 去除连字符
+            s = text_tools.hyphen_pattern.sub('', s)
+            
+            # 最后处理空格
+            s = text_tools.multi_space_pattern.sub(' ', s)
             normalized_sentences.append(s)
-        standardized_text = '[' + ','.join([f"'{s}'" for s in normalized_sentences]) + ']'
         
-        # 恢复科学计数法占位符
+        return normalized_sentences
+    
+    def _normalize_date_with_datetime(self, date_str: str) -> str:
+        """使用 dateutil.parser 解析各种日期格式"""
+        try:
+            original_str = date_str.strip()
+            try:
+                dt = date_parser.parse(original_str)
+            except:
+                try:
+                    dt = date_parser.parse(original_str, dayfirst=True)
+                except:
+                    dt = date_parser.parse(original_str, fuzzy=True)
+            return dt.strftime('%Y-%m-%d')
+        except Exception:
+            return date_str
+    
+    def _restore_placeholders(self, text: str, scientific_notations: list) -> str:
+        """恢复占位符"""
         for i, scientific_notation in enumerate(scientific_notations):
             placeholder = f"__SCIENTIFIC_{i}__"
-            standardized_text = standardized_text.replace(placeholder, scientific_notation)
-        
-        # 7. 分词分句处理（根据图2中的方法）
-        structured_text = self.tokenize_and_segment(standardized_text)
-        
-        return {
-            'normalized_text': standardized_text,  # 主要输出：标准化文本
-            'sentences': sentences,                # 按句分割的文本列表
-            'paragraphs': paragraphs,              # 段落列表
-            'original_length': len(original_text),
-            'normalized_length': len(standardized_text),
-            'structured_text': structured_text     # 新增：结构化文本（分词分句结果）
-        }
+            text = text.replace(placeholder, scientific_notation)
+        return text
 
     def tokenize_and_segment(self, standardized_text: str) -> dict:
-        """
-        对标准化文本进行分词分句处理
-        使用 spaCy + LTP 工具，按照中文能够理解的方式进行分词
-        """
+        """对标准化文本进行jieba分词分句处理"""
         try:
-            # 解析标准化文本（去除外层方括号和引号）
-            text_content = standardized_text.strip()
-            if text_content.startswith('[') and text_content.endswith(']'):
-                text_content = text_content[1:-1]
+            # 解析标准化文本
+            sentences = self._parse_standardized_text(standardized_text)
             
-            # 分割句子（按英文逗号分隔的字符串）
-            sentences = []
-            current_sentence = ""
-            in_quotes = False
-            
-            for char in text_content:
-                if char == "'" and (not current_sentence or current_sentence[-1] != '\\'):
-                    in_quotes = not in_quotes
-                elif char == ',' and not in_quotes:
-                    if current_sentence.strip():
-                        # 去除引号
-                        sentence = current_sentence.strip().strip("'")
-                        sentences.append(sentence)
-                    current_sentence = ""
-                else:
-                    current_sentence += char
-            
-            # 处理最后一个句子
-            if current_sentence.strip():
-                sentence = current_sentence.strip().strip("'")
-                sentences.append(sentence)
-            
-            # 初始化分词工具
-            jieba_seg = None
-            
-            if JIEBA_AVAILABLE:
-                try:
-                    jieba_seg = jieba
-                    logger.info("✅ jieba 加载成功")
-                except Exception as e:
-                    logger.warning(f"❌ jieba 加载失败: {e}")
-                    jieba_seg = None
-            else:
-                logger.info("jieba 不可用，使用简单分词")
-            
-            # 对每个句子进行分词
+            # 对每个句子进行jieba分词
             tokenized_sentences = []
             for sentence in sentences:
                 if not sentence.strip():
                     continue
                 
-                # 分词处理
-                if jieba_seg:
-                    try:
-                        # 使用 jieba 进行分词
-                        jieba_tokens = list(jieba_seg.cut(sentence))
-                        logger.info(f"jieba分词结果: {jieba_tokens}")
-                        final_tokens = jieba_tokens
-                    except Exception as e:
-                        logger.warning(f"jieba分词失败: {e}")
-                        final_tokens = self.simple_tokenize(sentence)  # 回退到简单分词
-                else:
-                    final_tokens = self.simple_tokenize(sentence)  # 使用简单分词
+                # 使用jieba分词
+                tokens = self._tokenize_sentence(sentence)
                 
-                # 清理分词结果：删除空格、冒号、括号等字符
-                cleaned_tokens = []
-                for token in final_tokens:
-                    # 删除空格、冒号、括号等字符
-                    cleaned_token = re.sub(r'[\s:：()（）【】\[\]]', '', token)
-                    if cleaned_token:  # 只保留非空token
-                        cleaned_tokens.append(cleaned_token)
-                
-                # 将分词结果格式化为图2中的格式（每个句子只有一个方括号）
-                if cleaned_tokens:
-                    tokenized_sentence = "['" + "', '".join(cleaned_tokens) + "']"
+                # 清理和格式化分词结果
+                if tokens:
+                    tokenized_sentence = "['" + "', '".join(tokens) + "']"
                     tokenized_sentences.append(tokenized_sentence)
             
-            # 创建完整的结构化文本（句子之间用][连接，不添加外层方括号）
-            if tokenized_sentences:
-                structured_text = "".join(tokenized_sentences)
-            else:
-                structured_text = ""
+            # 创建完整的结构化文本
+            structured_text = "".join(tokenized_sentences) if tokenized_sentences else ""
             
             logger.info(f"分词分句完成，句子数量: {len(tokenized_sentences)}")
             logger.info(f"结构化文本示例: {structured_text[:200]}...")
@@ -343,48 +429,52 @@ class PiiDetectView(APIView):
                 'sentence_count': 0,
                 'error': str(e)
             }
-
-    def simple_tokenize(self, text: str) -> list:
-        """
-        简单的分词方法，作为 jieba 的回退方案
-        按照中文标点符号和空格进行基本分词
-        """
-        if not text:
-            return []
+    
+    def _parse_standardized_text(self, standardized_text: str) -> list:
+        """解析标准化文本，提取句子列表"""
+        text_content = standardized_text.strip()
+        if text_content.startswith('[') and text_content.endswith(']'):
+            text_content = text_content[1:-1]
         
-        # 定义中文标点符号
-        chinese_punct = '，。！？；：""''（）【】、'
+        sentences = []
+        current_sentence = ""
+        in_quotes = False
         
-        # 按标点符号分割
-        tokens = []
-        current_token = ""
-        
-        for char in text:
-            if char in chinese_punct:
-                if current_token.strip():
-                    tokens.append(current_token.strip())
-                # 不保留标点符号作为独立token
-                current_token = ""
-            elif char.isspace():
-                if current_token.strip():
-                    tokens.append(current_token.strip())
-                current_token = ""
+        for char in text_content:
+            if char == "'" and (not current_sentence or current_sentence[-1] != '\\'):
+                in_quotes = not in_quotes
+            elif char == ',' and not in_quotes:
+                if current_sentence.strip():
+                    sentence = current_sentence.strip().strip("'")
+                    sentences.append(sentence)
+                current_sentence = ""
             else:
-                current_token += char
+                current_sentence += char
         
-        # 处理最后一个token
-        if current_token.strip():
-            tokens.append(current_token.strip())
+        # 处理最后一个句子
+        if current_sentence.strip():
+            sentence = current_sentence.strip().strip("'")
+            sentences.append(sentence)
         
-        # 过滤空token
-        tokens = [token for token in tokens if token.strip()]
+        return sentences
+    
+    def _tokenize_sentence(self, sentence: str) -> list:
+        """对单个句子进行分词 - 使用LTP分词"""
+        # 使用LTP进行分词
+        result = text_tools.ltp.pipeline([sentence], tasks=["cws"])
+        tokens = result.cws[0] if hasattr(result, 'cws') else result['cws'][0]
         
-        # 如果没有分割出任何token，返回原文本
-        if not tokens:
-            tokens = [text]
+        logger.info(f"LTP分词结果: {tokens}")
         
-        logger.info(f"简单分词结果: {tokens}")
-        return tokens
+        # 清理分词结果
+        cleaned_tokens = []
+        for token in tokens:
+            cleaned_token = re.sub(r'[\s()（）【】\[\]]', '', token)
+            if cleaned_token:
+                cleaned_tokens.append(cleaned_token)
+        
+        return cleaned_tokens
+    
 
     def save_structured_text(self, structured_text: str):
         """

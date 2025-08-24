@@ -9,4 +9,5 @@ openai
 python-dotenv
 opencc-python-reimplemented>=0.1.7
 python-dateutil>=2.8.2
-jieba>=0.42.1
+spacy>=3.7.0
+ltp>=4.2.0
