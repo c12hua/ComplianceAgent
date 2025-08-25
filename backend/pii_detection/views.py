@@ -29,11 +29,10 @@ class TextProcessingTools:
         
         # 初始化LTP和spaCy PhraseMatcher
         logger = logging.getLogger(__name__)
-        
-        # 初始化LTP分词器
+
         try:
             from ltp import LTP
-            self.ltp = LTP()  # 使用默认参数
+            self.ltp = LTP()
             self.ltp_available = True
             logger.info("✅ LTP 初始化成功")
         except (ImportError, Exception) as e:
@@ -41,18 +40,15 @@ class TextProcessingTools:
             self.ltp_available = False
             logger.warning(f"LTP 初始化失败: {e}")
         
-        # 初始化spaCy PhraseMatcher（仅用于术语匹配）
+        # 初始化spaCy PhraseMatcher（已禁用，保留代码结构）
         try:
             import spacy
             from spacy.matcher import PhraseMatcher
-            
-            # 创建空的英文模型用于PhraseMatcher
+ 
             self.nlp = spacy.blank("zh")
-            
-            # 初始化短语匹配器
             self.matcher = PhraseMatcher(self.nlp.vocab, attr="TEXT")
             
-            # 医学术语和单位列表（暂时禁用用于测试LTP原始分词）
+            # 医学术语和单位列表（已禁用，使用LTP原始分词）
             # medical_terms = [
             #     # 医学单位
             #     'mg/L', 'μg/mL', 'mmHg', 'U/L', 'μmol/L', 'g/L', 'mmol/L',
@@ -73,15 +69,14 @@ class TextProcessingTools:
             # self.matcher.add("MEDICAL_TERMS", patterns)
             
             self.spacy_available = True
-            logger.info("✅ spaCy PhraseMatcher 初始化成功（医学术语匹配已禁用）")
+            logger.info("✅ spaCy PhraseMatcher 初始化成功")
             
         except ImportError as e:
             self.nlp = None
             self.matcher = None
             self.spacy_available = False
-            logger.warning(f"spaCy 初始化失败: {e}，将无法使用术语匹配")
-        
-        # 初始化OpenCC
+            logger.warning(f"spaCy 初始化失败: {e}")
+
         self.opencc = OpenCC('t2s')
         
         # 预编译正则表达式
@@ -151,10 +146,9 @@ class TextProcessingTools:
         # 多空格
         self.multi_space_pattern = re.compile(r'\s+')
         
-        # 中文标点符号（用于简单分词）
+        # 中文标点符号（用于文本清理）
         self.chinese_punct = '，。！？；：""''（）【】、'
 
-# 全局工具实例
 text_tools = TextProcessingTools()
 
 @api_view(["POST"])
@@ -216,31 +210,27 @@ class PiiDetectView(APIView):
             raise ValueError('Unsupported file type')
 
     def normalize_text(self, text: str) -> dict:
-        """文本标准化主函数"""
+        """
+        文本标准化主函数
+        """
         if not text:
             return self._get_empty_result()
         
         original_text = text
-        
-        # 1. 基础清理和标准化
+
         text, scientific_notations = self._basic_cleanup(text)
-        
-        # 2. 句子和段落分割（用于返回结果）
+
         sentences = text_tools.sentence_split_pattern.split(text)
         sentences = [s.strip() for s in sentences if s.strip()]
         paragraphs = text.split('\n\n')
         paragraphs = [p.strip() for p in paragraphs if p.strip()]
-        
-        # 3. 深度处理每个句子
+
         normalized_sentences = self._process_sentences(text)
-        
-        # 4. 构建标准化文本
+
         standardized_text = '[' + ','.join([f"'{s}'" for s in normalized_sentences]) + ']'
-        
-        # 5. 恢复占位符
+
         standardized_text = self._restore_placeholders(standardized_text, scientific_notations)
-        
-        # 6. 分词分句处理
+
         structured_text = self.tokenize_and_segment(standardized_text)
         
         return {
@@ -253,7 +243,9 @@ class PiiDetectView(APIView):
         }
     
     def _get_empty_result(self) -> dict:
-        """返回空文本的标准结果"""
+        """
+        返回空文本的标准结果
+        """
         return {
             'normalized_text': '[]',
             'sentences': [],
@@ -268,7 +260,9 @@ class PiiDetectView(APIView):
         }
     
     def _basic_cleanup(self, text: str) -> tuple:
-        """基础文本清理"""
+        """
+        基础文本清理
+        """
         # 去除HTML标签和噪音字符
         text = text_tools.html_tag_pattern.sub('', text)
         text = text_tools.noise_pattern.sub('', text)
@@ -318,7 +312,9 @@ class PiiDetectView(APIView):
         return text, scientific_notations
     
     def _process_sentences(self, text: str) -> list:
-        """处理句子级别的标准化"""
+        """
+        处理句子级别的标准化
+        """
         raw_sentences = text_tools.sentence_split_pattern.split(text)
         normalized_sentences = []
         
@@ -356,14 +352,16 @@ class PiiDetectView(APIView):
             # 去除连字符
             s = text_tools.hyphen_pattern.sub('', s)
             
-            # 最后处理空格
+            # 处理空格
             s = text_tools.multi_space_pattern.sub(' ', s)
             normalized_sentences.append(s)
         
         return normalized_sentences
     
     def _normalize_date_with_datetime(self, date_str: str) -> str:
-        """使用 dateutil.parser 解析各种日期格式"""
+        """
+        使用 dateutil.parser 解析各种日期格式
+        """
         try:
             original_str = date_str.strip()
             try:
@@ -378,28 +376,30 @@ class PiiDetectView(APIView):
             return date_str
     
     def _restore_placeholders(self, text: str, scientific_notations: list) -> str:
-        """恢复占位符"""
+        """
+        恢复占位符
+        """
         for i, scientific_notation in enumerate(scientific_notations):
             placeholder = f"__SCIENTIFIC_{i}__"
             text = text.replace(placeholder, scientific_notation)
         return text
 
     def tokenize_and_segment(self, standardized_text: str) -> dict:
-        """对标准化文本进行jieba分词分句处理"""
+        """
+        对标准化文本进行LTP分词分句处理
+        """
         try:
             # 解析标准化文本
             sentences = self._parse_standardized_text(standardized_text)
             
-            # 对每个句子进行jieba分词
+            # 对每个句子进行LTP分词
             tokenized_sentences = []
             for sentence in sentences:
                 if not sentence.strip():
                     continue
-                
-                # 使用jieba分词
+
                 tokens = self._tokenize_sentence(sentence)
-                
-                # 清理和格式化分词结果
+
                 if tokens:
                     tokenized_sentence = "['" + "', '".join(tokens) + "']"
                     tokenized_sentences.append(tokenized_sentence)
@@ -409,8 +409,7 @@ class PiiDetectView(APIView):
             
             logger.info(f"分词分句完成，句子数量: {len(tokenized_sentences)}")
             logger.info(f"结构化文本示例: {structured_text[:200]}...")
-            
-            # 保存结构化文本到文件
+
             self.save_structured_text(structured_text)
             
             return {
@@ -431,7 +430,9 @@ class PiiDetectView(APIView):
             }
     
     def _parse_standardized_text(self, standardized_text: str) -> list:
-        """解析标准化文本，提取句子列表"""
+        """
+        解析标准化文本，提取句子列表
+        """
         text_content = standardized_text.strip()
         if text_content.startswith('[') and text_content.endswith(']'):
             text_content = text_content[1:-1]
@@ -459,14 +460,15 @@ class PiiDetectView(APIView):
         return sentences
     
     def _tokenize_sentence(self, sentence: str) -> list:
-        """对单个句子进行分词 - 使用LTP分词"""
+        """
+        对单个句子进行分词 - 使用LTP分词
+        """
         # 使用LTP进行分词
         result = text_tools.ltp.pipeline([sentence], tasks=["cws"])
         tokens = result.cws[0] if hasattr(result, 'cws') else result['cws'][0]
         
         logger.info(f"LTP分词结果: {tokens}")
-        
-        # 清理分词结果
+
         cleaned_tokens = []
         for token in tokens:
             cleaned_token = re.sub(r'[\s()（）【】\[\]]', '', token)
@@ -483,16 +485,13 @@ class PiiDetectView(APIView):
         保存路径：/backend/knowledge_base/text/
         """
         try:
-            # 创建输出目录
             output_dir = "/backend/knowledge_base/text/"
             os.makedirs(output_dir, exist_ok=True)
-            
-            # 生成文件名（时间戳格式）
+
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"病例文本_{timestamp}.json"
             filepath = os.path.join(output_dir, filename)
-            
-            # 保存结构化文本
+
             data = {
                 'timestamp': timestamp,
                 'structured_text': structured_text,
