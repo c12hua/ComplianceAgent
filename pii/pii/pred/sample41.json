@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "褚某",
+    "，",
+    "男",
+    "，",
+    "56",
+    "岁",
+    "胸痛",
+    "咳嗽",
+    "检查",
+    "MRI",
+    "提示",
+    "肺炎",
+    "给予",
+    "二甲双胍",
+    "电话",
+    "13452041663"
+  ],
+  "entities": [
+    {
+      "entity": "褚某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "56",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咳嗽",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "MRI",
+      "type": "检查项目",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺炎",
+      "type": "疾病",
+      "start": 23,
+      "end": 25,
+      "confidence": 0.7
+    },
+    {
+      "entity": "二甲双胍",
+      "type": "药物",
+      "start": 27,
+      "end": 31,
+      "confidence": 0.7
+    },
+    {
+      "entity": "13452041663",
+      "type": "电话",
+      "start": 33,
+      "end": 44,
+      "confidence": 0.7
+    }
+  ]
+}

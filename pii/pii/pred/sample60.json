@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "陈某",
+    "，",
+    "女",
+    "，",
+    "50",
+    "岁",
+    "咯血",
+    "就诊",
+    "B超",
+    "提示",
+    "肺结核",
+    "给予",
+    "降压药",
+    "身份证号",
+    "495990197301017155"
+  ],
+  "entities": [
+    {
+      "entity": "陈某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "50",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "B超",
+      "type": "检查项目",
+      "start": 15,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺结核",
+      "type": "疾病",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "降压药",
+      "type": "药物",
+      "start": 24,
+      "end": 27,
+      "confidence": 0.7
+    },
+    {
+      "entity": "495990197301017155",
+      "type": "身份证号",
+      "start": 29,
+      "end": 48,
+      "confidence": 0.7
+    }
+  ]
+}

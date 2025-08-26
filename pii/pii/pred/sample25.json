@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "褚某",
+    "，",
+    "女",
+    "，",
+    "78",
+    "岁",
+    "头痛",
+    "呼吸困难",
+    "就诊",
+    "CT",
+    "提示",
+    "脑梗死",
+    "给予",
+    "二甲双胍",
+    "支付信息",
+    "P007276340"
+  ],
+  "entities": [
+    {
+      "entity": "褚某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "78",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "呼吸困难",
+      "type": "症状",
+      "start": 13,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "CT",
+      "type": "检查项目",
+      "start": 19,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "脑梗死",
+      "type": "疾病",
+      "start": 23,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "二甲双胍",
+      "type": "药物",
+      "start": 28,
+      "end": 32,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P007276340",
+      "type": "支付信息",
+      "start": 35,
+      "end": 45,
+      "confidence": 0.7
+    }
+  ]
+}

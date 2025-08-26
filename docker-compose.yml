@@ -1,6 +1,41 @@
-version: '3.8'
-
 services:
+  vectorize:
+    build:
+      context: .
+      dockerfile: Dockerfile.vectorize
+    volumes:
+      - ./models:/root/.cache/huggingface/hub  # 持久化模型文件
+      - ./vector_store:/app/vector_store       # 持久化向量数据库
+    restart: always
+    
+  chroma:
+    build:
+      context: .
+      dockerfile: Dockerfile.chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./vector_store:/app/vector_store
+    restart: always
+    
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      - chroma
+    
+  query:
+    build:
+      context: .
+      dockerfile: Dockerfile.vectorize
+    volumes:
+      - ./vector_store:/app/vector_store
+      - ./use_vector_store.py:/app/use_vector_store.py
+    command: python use_vector_store.py
+    stdin_open: true
+    tty: true
+
   backend:
     build:
       context: ./
@@ -12,6 +47,8 @@ services:
     env_file:
       - backend/.env
     restart: always
+
+
 
   frontend:
     build:

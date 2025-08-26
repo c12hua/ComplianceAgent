@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "吴某",
+    "，",
+    "女",
+    "，",
+    "71",
+    "岁",
+    "胸闷",
+    "主诉",
+    "血常规",
+    "提示",
+    "糖尿病",
+    "给予",
+    "二甲双胍",
+    "邮箱",
+    "吴某71@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "吴某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "71",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸闷",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 14,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "糖尿病",
+      "type": "疾病",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "二甲双胍",
+      "type": "药物",
+      "start": 24,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "吴某71@example.com",
+      "type": "邮箱",
+      "start": 30,
+      "end": 48,
+      "confidence": 0.7
+    }
+  ]
+}

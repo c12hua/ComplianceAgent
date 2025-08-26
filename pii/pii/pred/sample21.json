@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "孙某",
+    "，",
+    "女",
+    "，",
+    "57",
+    "岁",
+    "咯血",
+    "入院",
+    "心电图",
+    "提示",
+    "肺结核",
+    "给予",
+    "阿托伐他汀",
+    "邮箱",
+    "孙某57@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "孙某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "57",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心电图",
+      "type": "检查项目",
+      "start": 16,
+      "end": 19,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺结核",
+      "type": "疾病",
+      "start": 21,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "阿托伐他汀",
+      "type": "药物",
+      "start": 26,
+      "end": 31,
+      "confidence": 0.7
+    },
+    {
+      "entity": "孙某57@example.com",
+      "type": "邮箱",
+      "start": 33,
+      "end": 51,
+      "confidence": 0.7
+    }
+  ]
+}

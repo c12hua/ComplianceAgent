@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "孙某",
+    "，",
+    "男",
+    "，",
+    "30",
+    "岁",
+    "头痛",
+    "呼吸困难",
+    "入院",
+    "血常规",
+    "提示",
+    "脑膜瘤",
+    "给予",
+    "维生素C",
+    "身份证号",
+    "881223196001012513"
+  ],
+  "entities": [
+    {
+      "entity": "孙某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "30",
+      "type": "年龄",
+      "start": 8,
+      "end": 10,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 12,
+      "end": 14,
+      "confidence": 0.7
+    },
+    {
+      "entity": "呼吸困难",
+      "type": "症状",
+      "start": 14,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 21,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "脑膜瘤",
+      "type": "疾病",
+      "start": 26,
+      "end": 29,
+      "confidence": 0.7
+    },
+    {
+      "entity": "维生素C",
+      "type": "药物",
+      "start": 31,
+      "end": 35,
+      "confidence": 0.7
+    },
+    {
+      "entity": "881223196001012513",
+      "type": "身份证号",
+      "start": 38,
+      "end": 57,
+      "confidence": 0.7
+    }
+  ]
+}

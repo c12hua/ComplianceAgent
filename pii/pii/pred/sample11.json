@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "郑某",
+    "，",
+    "男",
+    "，",
+    "74",
+    "岁",
+    "头晕",
+    "咯血",
+    "就诊",
+    "心电图",
+    "提示",
+    "冠心病",
+    "给予",
+    "二甲双胍",
+    "身份证号",
+    "210157195101016383"
+  ],
+  "entities": [
+    {
+      "entity": "郑某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "74",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头晕",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心电图",
+      "type": "检查项目",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "冠心病",
+      "type": "疾病",
+      "start": 23,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "二甲双胍",
+      "type": "药物",
+      "start": 28,
+      "end": 32,
+      "confidence": 0.7
+    },
+    {
+      "entity": "210157195101016383",
+      "type": "身份证号",
+      "start": 35,
+      "end": 54,
+      "confidence": 0.7
+    }
+  ]
+}

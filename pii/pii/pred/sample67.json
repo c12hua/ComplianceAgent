@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "李某",
+    "，",
+    "女",
+    "，",
+    "51",
+    "岁",
+    "头痛",
+    "主诉",
+    "心电图",
+    "提示",
+    "肺炎",
+    "给予",
+    "维生素C",
+    "邮箱",
+    "李某51@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "李某",
+      "type": "姓名",
+      "start": 1,
+      "end": 3,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 4,
+      "end": 5,
+      "confidence": 0.7
+    },
+    {
+      "entity": "51",
+      "type": "年龄",
+      "start": 6,
+      "end": 8,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 9,
+      "end": 11,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心电图",
+      "type": "检查项目",
+      "start": 12,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺炎",
+      "type": "疾病",
+      "start": 17,
+      "end": 19,
+      "confidence": 0.7
+    },
+    {
+      "entity": "维生素C",
+      "type": "药物",
+      "start": 21,
+      "end": 25,
+      "confidence": 0.7
+    },
+    {
+      "entity": "李某51@example.com",
+      "type": "邮箱",
+      "start": 27,
+      "end": 45,
+      "confidence": 0.7
+    }
+  ]
+}

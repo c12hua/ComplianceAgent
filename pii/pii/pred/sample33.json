@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "赵某",
+    "，",
+    "男",
+    "，",
+    "43",
+    "岁",
+    "头痛",
+    "咯血",
+    "主诉",
+    "心电图",
+    "提示",
+    "急性咽炎",
+    "给予",
+    "阿司匹林",
+    "支付信息",
+    "P047624047"
+  ],
+  "entities": [
+    {
+      "entity": "赵某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "43",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心电图",
+      "type": "检查项目",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "急性咽炎",
+      "type": "疾病",
+      "start": 24,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "阿司匹林",
+      "type": "药物",
+      "start": 30,
+      "end": 34,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P047624047",
+      "type": "支付信息",
+      "start": 37,
+      "end": 47,
+      "confidence": 0.7
+    }
+  ]
+}

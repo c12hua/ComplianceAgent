@@ -1,0 +1,53 @@
+FROM python:3.9-slim-bullseye
+
+WORKDIR /app
+
+# 切换到阿里云镜像源
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+# 安装基本依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装更新版本的 SQLite3
+RUN wget https://www.sqlite.org/2023/sqlite-autoconf-3420000.tar.gz && \
+    tar xzf sqlite-autoconf-3420000.tar.gz && \
+    cd sqlite-autoconf-3420000 && \
+    ./configure --prefix=/usr/local && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf sqlite-autoconf-3420000* && \
+    ldconfig
+
+# 设置 pip 国内镜像源（清华）
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 复制项目文件
+COPY requirements.txt .
+COPY backend/knowledge_base/merge.json ./backend/knowledge_base/
+COPY vector_store.py .
+
+# 安装 Python 依赖
+RUN pip install -r requirements.txt
+
+# 创建模型缓存目录
+RUN mkdir -p /root/.cache/huggingface/hub
+
+# 设置环境变量
+ENV HF_ENDPOINT=https://hf-mirror.com
+ENV HF_HOME=/root/.cache/huggingface/hub
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV PATH=/usr/local/bin:$PATH
+
+# 复制本地已下载好的模型（保证构建不失败）
+#COPY .cache/huggingface /root/.cache/huggingface
+
+# 运行向量化服务
+CMD ["python", "vector_store.py"]

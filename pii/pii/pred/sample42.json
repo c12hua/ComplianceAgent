@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "吴某",
+    "，",
+    "男",
+    "，",
+    "40",
+    "岁",
+    "咳嗽",
+    "主诉",
+    "B超",
+    "提示",
+    "脑膜瘤",
+    "给予",
+    "阿托伐他汀",
+    "支付信息",
+    "P993692008"
+  ],
+  "entities": [
+    {
+      "entity": "吴某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "40",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咳嗽",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "B超",
+      "type": "检查项目",
+      "start": 16,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "脑膜瘤",
+      "type": "疾病",
+      "start": 20,
+      "end": 23,
+      "confidence": 0.7
+    },
+    {
+      "entity": "阿托伐他汀",
+      "type": "药物",
+      "start": 25,
+      "end": 30,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P993692008",
+      "type": "支付信息",
+      "start": 34,
+      "end": 44,
+      "confidence": 0.7
+    }
+  ]
+}

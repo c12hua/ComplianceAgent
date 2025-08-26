@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "吴某",
+    "，",
+    "女",
+    "，",
+    "55",
+    "岁",
+    "恶心",
+    "头晕",
+    "入院",
+    "CT",
+    "提示",
+    "脑梗死",
+    "给予",
+    "布洛芬",
+    "邮箱",
+    "吴某55@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "吴某",
+      "type": "姓名",
+      "start": 1,
+      "end": 2
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 3,
+      "end": 4
+    },
+    {
+      "entity": "55岁",
+      "type": "年龄",
+      "start": 5,
+      "end": 7
+    },
+    {
+      "entity": "恶心",
+      "type": "症状",
+      "start": 7,
+      "end": 8
+    },
+    {
+      "entity": "脑梗死",
+      "type": "疾病",
+      "start": 12,
+      "end": 13
+    },
+    {
+      "entity": "布洛芬",
+      "type": "药物",
+      "start": 14,
+      "end": 15
+    },
+    {
+      "entity": "吴某55@example.com",
+      "type": "邮箱",
+      "start": 16,
+      "end": 17
+    },
+    {
+      "entity": "头晕",
+      "type": "症状",
+      "start": 8,
+      "end": 9
+    }
+  ]
+}

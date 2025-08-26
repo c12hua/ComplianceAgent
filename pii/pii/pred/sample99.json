@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "陈某",
+    "，",
+    "男",
+    "，",
+    "32",
+    "岁",
+    "头晕",
+    "主诉",
+    "CT",
+    "提示",
+    "冠心病",
+    "给予",
+    "布洛芬",
+    "身份证号",
+    "567948200001013561"
+  ],
+  "entities": [
+    {
+      "entity": "陈某",
+      "type": "姓名",
+      "start": 1,
+      "end": 3,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 4,
+      "end": 5,
+      "confidence": 0.7
+    },
+    {
+      "entity": "32",
+      "type": "年龄",
+      "start": 6,
+      "end": 8,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头晕",
+      "type": "症状",
+      "start": 9,
+      "end": 11,
+      "confidence": 0.7
+    },
+    {
+      "entity": "CT",
+      "type": "检查项目",
+      "start": 12,
+      "end": 14,
+      "confidence": 0.7
+    },
+    {
+      "entity": "冠心病",
+      "type": "疾病",
+      "start": 15,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "布洛芬",
+      "type": "药物",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "567948200001013561",
+      "type": "身份证号",
+      "start": 24,
+      "end": 43,
+      "confidence": 0.7
+    }
+  ]
+}

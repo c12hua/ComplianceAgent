@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "褚某",
+    "，",
+    "女",
+    "，",
+    "70",
+    "岁",
+    "头痛",
+    "咳嗽",
+    "检查",
+    "CT",
+    "提示",
+    "肺炎",
+    "给予",
+    "胰岛素",
+    "支付信息",
+    "P693209344"
+  ],
+  "entities": [
+    {
+      "entity": "褚某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "70",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咳嗽",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "CT",
+      "type": "检查项目",
+      "start": 18,
+      "end": 20,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺炎",
+      "type": "疾病",
+      "start": 22,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胰岛素",
+      "type": "药物",
+      "start": 25,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P693209344",
+      "type": "支付信息",
+      "start": 31,
+      "end": 41,
+      "confidence": 0.7
+    }
+  ]
+}

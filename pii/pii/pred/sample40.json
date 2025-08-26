@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "卫某",
+    "，",
+    "女",
+    "，",
+    "75",
+    "岁",
+    "发热",
+    "入院",
+    "MRI",
+    "提示",
+    "胆结石",
+    "给予",
+    "青霉素",
+    "医保卡号",
+    "M471759546"
+  ],
+  "entities": [
+    {
+      "entity": "卫某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "75",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "发热",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胆结石",
+      "type": "疾病",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "青霉素",
+      "type": "药物",
+      "start": 23,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "M471759546",
+      "type": "支付信息",
+      "start": 29,
+      "end": 39,
+      "confidence": 0.7
+    }
+  ]
+}

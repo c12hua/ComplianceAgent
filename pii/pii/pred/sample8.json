@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "吴某",
+    "，",
+    "女",
+    "，",
+    "55",
+    "岁",
+    "头晕",
+    "就诊",
+    "胸片",
+    "提示",
+    "冠心病",
+    "给予",
+    "头孢",
+    "身份证号",
+    "513903197101016155"
+  ],
+  "entities": [
+    {
+      "entity": "吴某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "55",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头晕",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸片",
+      "type": "检查项目",
+      "start": 15,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "冠心病",
+      "type": "疾病",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头孢",
+      "type": "药物",
+      "start": 24,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "513903197101016155",
+      "type": "身份证号",
+      "start": 29,
+      "end": 48,
+      "confidence": 0.7
+    }
+  ]
+}

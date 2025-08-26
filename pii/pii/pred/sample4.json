@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "钱某",
+    "，",
+    "女",
+    "，",
+    "74",
+    "岁",
+    "发热",
+    "恶心",
+    "主诉",
+    "胸片",
+    "提示",
+    "急性咽炎",
+    "给予",
+    "胰岛素",
+    "医保卡号",
+    "M183435325"
+  ],
+  "entities": [
+    {
+      "entity": "钱某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "74",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "发热",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "恶心",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸片",
+      "type": "检查项目",
+      "start": 18,
+      "end": 20,
+      "confidence": 0.7
+    },
+    {
+      "entity": "急性咽炎",
+      "type": "疾病",
+      "start": 22,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胰岛素",
+      "type": "药物",
+      "start": 28,
+      "end": 31,
+      "confidence": 0.7
+    },
+    {
+      "entity": "M183435325",
+      "type": "支付信息",
+      "start": 34,
+      "end": 45,
+      "confidence": 0.7
+    }
+  ]
+}

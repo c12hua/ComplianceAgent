@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "蒋某",
+    "，",
+    "男",
+    "，",
+    "29",
+    "岁",
+    "胸闷",
+    "检查",
+    "MRI",
+    "提示",
+    "胆结石",
+    "给予",
+    "布洛芬",
+    "身份证号",
+    "470665195701012911"
+  ],
+  "entities": [
+    {
+      "entity": "蒋某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "29",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸闷",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "MRI",
+      "type": "检查项目",
+      "start": 15,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胆结石",
+      "type": "疾病",
+      "start": 20,
+      "end": 23,
+      "confidence": 0.7
+    },
+    {
+      "entity": "布洛芬",
+      "type": "药物",
+      "start": 25,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "470665195701012911",
+      "type": "身份证号",
+      "start": 31,
+      "end": 50,
+      "confidence": 0.7
+    }
+  ]
+}

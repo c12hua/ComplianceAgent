@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "赵某",
+    "，",
+    "男",
+    "，",
+    "32",
+    "岁",
+    "咯血",
+    "入院",
+    "胸片",
+    "提示",
+    "胆结石",
+    "给予",
+    "胰岛素",
+    "支付信息",
+    "P915996264"
+  ],
+  "entities": [
+    {
+      "entity": "赵某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "32",
+      "type": "年龄",
+      "start": 8,
+      "end": 10,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 12,
+      "end": 14,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胆结石",
+      "type": "疾病",
+      "start": 21,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胰岛素",
+      "type": "药物",
+      "start": 26,
+      "end": 29,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P915996264",
+      "type": "支付信息",
+      "start": 33,
+      "end": 43,
+      "confidence": 0.7
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "孙某",
+    "，",
+    "女",
+    "，",
+    "79",
+    "岁",
+    "胸闷",
+    "头痛",
+    "入院",
+    "心电图",
+    "提示",
+    "肺结核",
+    "给予",
+    "维生素C",
+    "医保卡号",
+    "M935778146"
+  ],
+  "entities": [
+    {
+      "entity": "孙某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "79",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸闷",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心电图",
+      "type": "检查项目",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺结核",
+      "type": "疾病",
+      "start": 23,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "维生素C",
+      "type": "药物",
+      "start": 28,
+      "end": 32,
+      "confidence": 0.7
+    },
+    {
+      "entity": "M935778146",
+      "type": "支付信息",
+      "start": 35,
+      "end": 45,
+      "confidence": 0.7
+    }
+  ]
+}

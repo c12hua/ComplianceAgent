@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "卫某",
+    "，",
+    "男",
+    "，",
+    "22",
+    "岁",
+    "头晕",
+    "腹痛",
+    "检查",
+    "MRI",
+    "提示",
+    "心力衰竭",
+    "给予",
+    "头孢",
+    "邮箱",
+    "卫某22@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "卫某",
+      "type": "姓名",
+      "start": 1,
+      "end": 3,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 4,
+      "end": 5,
+      "confidence": 0.7
+    },
+    {
+      "entity": "22",
+      "type": "年龄",
+      "start": 6,
+      "end": 8,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头晕",
+      "type": "症状",
+      "start": 9,
+      "end": 11,
+      "confidence": 0.7
+    },
+    {
+      "entity": "腹痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "MRI",
+      "type": "检查项目",
+      "start": 15,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心力衰竭",
+      "type": "疾病",
+      "start": 20,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头孢",
+      "type": "药物",
+      "start": 26,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "卫某22@example.com",
+      "type": "邮箱",
+      "start": 30,
+      "end": 48,
+      "confidence": 0.7
+    }
+  ]
+}

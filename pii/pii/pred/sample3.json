@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "褚某",
+    "，",
+    "女",
+    "，",
+    "32",
+    "岁",
+    "头痛",
+    "咽痛",
+    "就诊",
+    "血常规",
+    "提示",
+    "心力衰竭",
+    "给予",
+    "氯吡格雷",
+    "邮箱",
+    "褚某32@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "褚某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "32",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咽痛",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心力衰竭",
+      "type": "疾病",
+      "start": 23,
+      "end": 27,
+      "confidence": 0.7
+    },
+    {
+      "entity": "氯吡格雷",
+      "type": "药物",
+      "start": 29,
+      "end": 33,
+      "confidence": 0.7
+    },
+    {
+      "entity": "褚某32@example.com",
+      "type": "邮箱",
+      "start": 35,
+      "end": 52,
+      "confidence": 0.7
+    }
+  ]
+}

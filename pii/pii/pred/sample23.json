@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "蒋某",
+    "，",
+    "男",
+    "，",
+    "79",
+    "岁",
+    "胸痛",
+    "入院",
+    "B超",
+    "提示",
+    "乙肝",
+    "给予",
+    "二甲双胍",
+    "邮箱",
+    "蒋某79@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "蒋某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "79",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "乙肝",
+      "type": "疾病",
+      "start": 18,
+      "end": 20,
+      "confidence": 0.7
+    },
+    {
+      "entity": "二甲双胍",
+      "type": "药物",
+      "start": 22,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "蒋某79@example.com",
+      "type": "邮箱",
+      "start": 28,
+      "end": 46,
+      "confidence": 0.7
+    }
+  ]
+}

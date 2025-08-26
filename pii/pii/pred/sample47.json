@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "陈某",
+    "，",
+    "男",
+    "，",
+    "68",
+    "岁",
+    "发热",
+    "腹痛",
+    "就诊",
+    "心电图",
+    "提示",
+    "冠心病",
+    "给予",
+    "氯吡格雷",
+    "医保卡号",
+    "M559392272"
+  ],
+  "entities": [
+    {
+      "entity": "陈某",
+      "type": "姓名",
+      "start": 1,
+      "end": 3,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 4,
+      "end": 5,
+      "confidence": 0.7
+    },
+    {
+      "entity": "68",
+      "type": "年龄",
+      "start": 6,
+      "end": 8,
+      "confidence": 0.7
+    },
+    {
+      "entity": "发热",
+      "type": "症状",
+      "start": 9,
+      "end": 11,
+      "confidence": 0.7
+    },
+    {
+      "entity": "腹痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心电图",
+      "type": "检查项目",
+      "start": 15,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "冠心病",
+      "type": "疾病",
+      "start": 20,
+      "end": 23,
+      "confidence": 0.7
+    },
+    {
+      "entity": "氯吡格雷",
+      "type": "药物",
+      "start": 25,
+      "end": 29,
+      "confidence": 0.7
+    },
+    {
+      "entity": "M559392272",
+      "type": "支付信息",
+      "start": 32,
+      "end": 42,
+      "confidence": 0.7
+    }
+  ]
+}

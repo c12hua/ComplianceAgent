@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "王某",
+    "，",
+    "女",
+    "，",
+    "66",
+    "岁",
+    "胸痛",
+    "咳嗽",
+    "主诉",
+    "血常规",
+    "提示",
+    "胆结石",
+    "给予",
+    "氯吡格雷",
+    "支付信息",
+    "P079999921"
+  ],
+  "entities": [
+    {
+      "entity": "王某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "66",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咳嗽",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胆结石",
+      "type": "疾病",
+      "start": 24,
+      "end": 27,
+      "confidence": 0.7
+    },
+    {
+      "entity": "氯吡格雷",
+      "type": "药物",
+      "start": 29,
+      "end": 33,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P079999921",
+      "type": "支付信息",
+      "start": 36,
+      "end": 46,
+      "confidence": 0.7
+    }
+  ]
+}

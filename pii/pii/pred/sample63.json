@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "王某",
+    "，",
+    "男",
+    "，",
+    "73",
+    "岁",
+    "咯血",
+    "胸闷",
+    "入院",
+    "B超",
+    "提示",
+    "急性咽炎",
+    "给予",
+    "布洛芬",
+    "邮箱",
+    "王某73@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "王某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "73",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸闷",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "B超",
+      "type": "检查项目",
+      "start": 18,
+      "end": 20,
+      "confidence": 0.7
+    },
+    {
+      "entity": "急性咽炎",
+      "type": "疾病",
+      "start": 22,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "布洛芬",
+      "type": "药物",
+      "start": 28,
+      "end": 31,
+      "confidence": 0.7
+    },
+    {
+      "entity": "王某73@example.com",
+      "type": "邮箱",
+      "start": 33,
+      "end": 51,
+      "confidence": 0.7
+    }
+  ]
+}

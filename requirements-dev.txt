@@ -1,0 +1,14 @@
+# 从基础依赖继承
+-r requirements.txt
+
+# 开发工具
+pytest>=7.4.0
+black>=23.7.0
+flake8>=6.1.0
+mypy>=1.5.1
+pytest-cov>=4.1.0
+ipykernel>=6.25.1
+
+# 调试工具
+debugpy>=1.6.7
+ipdb>=0.13.13

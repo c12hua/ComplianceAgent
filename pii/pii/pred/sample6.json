@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "蒋某",
+    "，",
+    "女",
+    "，",
+    "51",
+    "岁",
+    "咯血",
+    "就诊",
+    "心电图",
+    "提示",
+    "糖尿病",
+    "给予",
+    "头孢",
+    "电话",
+    "13474957781"
+  ],
+  "entities": [
+    {
+      "entity": "蒋某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "51",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "糖尿病",
+      "type": "疾病",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头孢",
+      "type": "药物",
+      "start": 23,
+      "end": 25,
+      "confidence": 0.7
+    },
+    {
+      "entity": "13474957781",
+      "type": "电话",
+      "start": 27,
+      "end": 38,
+      "confidence": 0.7
+    }
+  ]
+}

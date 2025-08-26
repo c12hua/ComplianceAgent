@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "褚某",
+    "，",
+    "女",
+    "，",
+    "34",
+    "岁",
+    "发热",
+    "咳嗽",
+    "检查",
+    "MRI",
+    "提示",
+    "糖尿病",
+    "给予",
+    "维生素C",
+    "邮箱",
+    "褚某34@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "褚某",
+      "type": "姓名",
+      "start": 1,
+      "end": 2
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 3,
+      "end": 4
+    },
+    {
+      "entity": "34岁",
+      "type": "年龄",
+      "start": 5,
+      "end": 7
+    },
+    {
+      "entity": "发热",
+      "type": "症状",
+      "start": 7,
+      "end": 8
+    },
+    {
+      "entity": "糖尿病",
+      "type": "疾病",
+      "start": 12,
+      "end": 13
+    },
+    {
+      "entity": "维生素C",
+      "type": "药物",
+      "start": 14,
+      "end": 15
+    },
+    {
+      "entity": "褚某34@example.com",
+      "type": "邮箱",
+      "start": 16,
+      "end": 17
+    },
+    {
+      "entity": "咳嗽",
+      "type": "症状",
+      "start": 8,
+      "end": 9
+    }
+  ]
+}

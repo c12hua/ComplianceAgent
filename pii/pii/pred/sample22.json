@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "蒋某",
+    "，",
+    "女",
+    "，",
+    "19",
+    "岁",
+    "咽痛",
+    "呼吸困难",
+    "检查",
+    "胸片",
+    "提示",
+    "脑梗死",
+    "给予",
+    "布洛芬",
+    "邮箱",
+    "蒋某19@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "蒋某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "19",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咽痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "呼吸困难",
+      "type": "症状",
+      "start": 13,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸片",
+      "type": "检查项目",
+      "start": 19,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "脑梗死",
+      "type": "疾病",
+      "start": 23,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "布洛芬",
+      "type": "药物",
+      "start": 28,
+      "end": 31,
+      "confidence": 0.7
+    },
+    {
+      "entity": "蒋某19@example.com",
+      "type": "邮箱",
+      "start": 33,
+      "end": 51,
+      "confidence": 0.7
+    }
+  ]
+}

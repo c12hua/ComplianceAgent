@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "褚某",
+    "，",
+    "女",
+    "，",
+    "56",
+    "岁",
+    "呼吸困难",
+    "就诊",
+    "B超",
+    "提示",
+    "肺结核",
+    "给予",
+    "降压药",
+    "身份证号",
+    "127271197701015482"
+  ],
+  "entities": [
+    {
+      "entity": "褚某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "56",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "呼吸困难",
+      "type": "症状",
+      "start": 11,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "B超",
+      "type": "检查项目",
+      "start": 17,
+      "end": 19,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺结核",
+      "type": "疾病",
+      "start": 21,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "降压药",
+      "type": "药物",
+      "start": 26,
+      "end": 29,
+      "confidence": 0.7
+    },
+    {
+      "entity": "127271197701015482",
+      "type": "身份证号",
+      "start": 32,
+      "end": 50,
+      "confidence": 0.7
+    }
+  ]
+}

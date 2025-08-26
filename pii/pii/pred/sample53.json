@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "钱某",
+    "，",
+    "女",
+    "，",
+    "34",
+    "岁",
+    "胸闷",
+    "检查",
+    "胸片",
+    "提示",
+    "心力衰竭",
+    "给予",
+    "胰岛素",
+    "支付信息",
+    "P070245024"
+  ],
+  "entities": [
+    {
+      "entity": "钱某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "34",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸闷",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸片",
+      "type": "检查项目",
+      "start": 15,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心力衰竭",
+      "type": "疾病",
+      "start": 19,
+      "end": 23,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胰岛素",
+      "type": "药物",
+      "start": 25,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P070245024",
+      "type": "支付信息",
+      "start": 31,
+      "end": 41,
+      "confidence": 0.7
+    }
+  ]
+}

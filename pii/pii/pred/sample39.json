@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "郑某",
+    "，",
+    "女",
+    "，",
+    "78",
+    "岁",
+    "胸闷",
+    "呼吸困难",
+    "检查",
+    "血常规",
+    "提示",
+    "肺结核",
+    "给予",
+    "布洛芬",
+    "电话",
+    "13595941219"
+  ],
+  "entities": [
+    {
+      "entity": "郑某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "78",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸闷",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "呼吸困难",
+      "type": "症状",
+      "start": 13,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺结核",
+      "type": "疾病",
+      "start": 24,
+      "end": 27,
+      "confidence": 0.7
+    },
+    {
+      "entity": "布洛芬",
+      "type": "药物",
+      "start": 29,
+      "end": 32,
+      "confidence": 0.7
+    },
+    {
+      "entity": "13595941219",
+      "type": "电话",
+      "start": 34,
+      "end": 45,
+      "confidence": 0.7
+    }
+  ]
+}

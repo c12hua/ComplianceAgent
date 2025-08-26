@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "蒋某",
+    "，",
+    "女",
+    "，",
+    "21",
+    "岁",
+    "头痛",
+    "咳嗽",
+    "主诉",
+    "血常规",
+    "提示",
+    "乙肝",
+    "给予",
+    "胰岛素",
+    "邮箱",
+    "蒋某21@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "蒋某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "21",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咳嗽",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "乙肝",
+      "type": "疾病",
+      "start": 23,
+      "end": 25,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胰岛素",
+      "type": "药物",
+      "start": 27,
+      "end": 30,
+      "confidence": 0.7
+    },
+    {
+      "entity": "蒋某21@example.com",
+      "type": "邮箱",
+      "start": 32,
+      "end": 50,
+      "confidence": 0.7
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "沈某",
+    "，",
+    "女",
+    "，",
+    "37",
+    "岁",
+    "呼吸困难",
+    "咯血",
+    "主诉",
+    "血常规",
+    "提示",
+    "胆结石",
+    "给予",
+    "阿司匹林",
+    "电话",
+    "13046724020"
+  ],
+  "entities": [
+    {
+      "entity": "沈某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "37",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "13046724020",
+      "type": "电话",
+      "start": 31,
+      "end": 42,
+      "confidence": 0.7
+    },
+    {
+      "entity": "呼吸困难",
+      "type": "症状",
+      "start": 10,
+      "end": 14,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 14,
+      "end": 16,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胆结石",
+      "type": "疾病",
+      "start": 23,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "阿司匹林",
+      "type": "药物",
+      "start": 28,
+      "end": 32,
+      "confidence": 0.7
+    }
+  ]
+}

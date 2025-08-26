@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "卫某",
+    "，",
+    "女",
+    "，",
+    "19",
+    "岁",
+    "恶心",
+    "头晕",
+    "入院",
+    "血常规",
+    "提示",
+    "肺炎",
+    "给予",
+    "头孢",
+    "身份证号",
+    "291435199101018197"
+  ],
+  "entities": [
+    {
+      "entity": "卫某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "19",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "恶心",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头晕",
+      "type": "症状",
+      "start": 13,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 19,
+      "end": 22,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺炎",
+      "type": "疾病",
+      "start": 24,
+      "end": 26,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头孢",
+      "type": "药物",
+      "start": 28,
+      "end": 30,
+      "confidence": 0.7
+    },
+    {
+      "entity": "291435199101018197",
+      "type": "身份证号",
+      "start": 33,
+      "end": 52,
+      "confidence": 0.7
+    }
+  ]
+}

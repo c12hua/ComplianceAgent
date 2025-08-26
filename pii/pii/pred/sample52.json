@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "吴某",
+    "，",
+    "男",
+    "，",
+    "50",
+    "岁",
+    "咯血",
+    "检查",
+    "B超",
+    "提示",
+    "急性咽炎",
+    "给予",
+    "阿司匹林",
+    "电话",
+    "13376110191"
+  ],
+  "entities": [
+    {
+      "entity": "吴某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "50",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "B超",
+      "type": "检查项目",
+      "start": 15,
+      "end": 17,
+      "confidence": 0.7
+    },
+    {
+      "entity": "急性咽炎",
+      "type": "疾病",
+      "start": 19,
+      "end": 23,
+      "confidence": 0.7
+    },
+    {
+      "entity": "阿司匹林",
+      "type": "药物",
+      "start": 25,
+      "end": 29,
+      "confidence": 0.7
+    },
+    {
+      "entity": "13376110191",
+      "type": "电话",
+      "start": 31,
+      "end": 42,
+      "confidence": 0.7
+    }
+  ]
+}

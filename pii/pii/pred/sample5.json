@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "周某",
+    "，",
+    "男",
+    "，",
+    "46",
+    "岁",
+    "恶心",
+    "咯血",
+    "入院",
+    "心电图",
+    "提示",
+    "肺炎",
+    "给予",
+    "氯吡格雷",
+    "身份证号",
+    "228681200001013371"
+  ],
+  "entities": [
+    {
+      "entity": "周某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "46",
+      "type": "年龄",
+      "start": 8,
+      "end": 10,
+      "confidence": 0.7
+    },
+    {
+      "entity": "恶心",
+      "type": "症状",
+      "start": 12,
+      "end": 14,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咯血",
+      "type": "症状",
+      "start": 14,
+      "end": 16,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心电图",
+      "type": "检查项目",
+      "start": 20,
+      "end": 23,
+      "confidence": 0.7
+    },
+    {
+      "entity": "肺炎",
+      "type": "疾病",
+      "start": 25,
+      "end": 27,
+      "confidence": 0.7
+    },
+    {
+      "entity": "氯吡格雷",
+      "type": "药物",
+      "start": 29,
+      "end": 33,
+      "confidence": 0.7
+    },
+    {
+      "entity": "228681200001013371",
+      "type": "身份证号",
+      "start": 36,
+      "end": 55,
+      "confidence": 0.7
+    }
+  ]
+}

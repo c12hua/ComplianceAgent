@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "沈某",
+    "，",
+    "女",
+    "，",
+    "20",
+    "岁",
+    "胸闷",
+    "入院",
+    "MRI",
+    "提示",
+    "心力衰竭",
+    "给予",
+    "降压药",
+    "支付信息",
+    "P991544049"
+  ],
+  "entities": [
+    {
+      "entity": "沈某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "20",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸闷",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "MRI",
+      "type": "检查项目",
+      "start": 15,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "心力衰竭",
+      "type": "疾病",
+      "start": 20,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "降压药",
+      "type": "药物",
+      "start": 26,
+      "end": 29,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P991544049",
+      "type": "支付信息",
+      "start": 33,
+      "end": 43,
+      "confidence": 0.7
+    }
+  ]
+}

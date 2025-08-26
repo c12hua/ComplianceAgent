@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "冯某",
+    "，",
+    "女",
+    "，",
+    "39",
+    "岁",
+    "咽痛",
+    "就诊",
+    "心电图",
+    "提示",
+    "冠心病",
+    "给予",
+    "头孢",
+    "电话",
+    "13856106865"
+  ],
+  "entities": [
+    {
+      "entity": "冯某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "39",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咽痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "冠心病",
+      "type": "疾病",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "头孢",
+      "type": "药物",
+      "start": 23,
+      "end": 25,
+      "confidence": 0.7
+    },
+    {
+      "entity": "13856106865",
+      "type": "电话",
+      "start": 27,
+      "end": 38,
+      "confidence": 0.7
+    }
+  ]
+}

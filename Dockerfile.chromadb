@@ -1,0 +1,33 @@
+FROM ubuntu:22.04
+
+WORKDIR /app
+
+# 安装 Python 和必要的包
+RUN apt-get update && \
+    apt-get install -y python3-pip python3-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 安装 Python 包
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple chromadb uvicorn fastapi
+
+# 安装基本依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设置 pip 国内镜像源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 安装 ChromaDB
+RUN pip install chromadb uvicorn fastapi
+
+# 创建必要的目录
+RUN mkdir -p /app/vector_store
+
+EXPOSE 8000
+
+# 启动 ChromaDB 服务器
+CMD ["uvicorn", "chromadb.app:app", "--host", "0.0.0.0", "--port", "8000"]

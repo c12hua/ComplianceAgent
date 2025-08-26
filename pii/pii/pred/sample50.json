@@ -1,0 +1,78 @@
+{
+  "tokens": [
+    "患者",
+    "王某",
+    "，",
+    "男",
+    "，",
+    "33",
+    "岁",
+    "呼吸困难",
+    "主诉",
+    "血常规",
+    "提示",
+    "乙肝",
+    "给予",
+    "阿托伐他汀",
+    "身份证号",
+    "471106200801013753"
+  ],
+  "entities": [
+    {
+      "entity": "王某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "33",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "呼吸困难",
+      "type": "症状",
+      "start": 11,
+      "end": 15,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 17,
+      "end": 20,
+      "confidence": 0.7
+    },
+    {
+      "entity": "乙肝",
+      "type": "疾病",
+      "start": 22,
+      "end": 24,
+      "confidence": 0.7
+    },
+    {
+      "entity": "阿托伐他汀",
+      "type": "药物",
+      "start": 26,
+      "end": 31,
+      "confidence": 0.7
+    },
+    {
+      "entity": "471106200801013753",
+      "type": "身份证号",
+      "start": 34,
+      "end": 53,
+      "confidence": 0.7
+    }
+  ]
+}

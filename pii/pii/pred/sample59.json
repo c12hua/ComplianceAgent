@@ -1,0 +1,86 @@
+{
+  "tokens": [
+    "患者",
+    "陈某",
+    "，",
+    "男",
+    "，",
+    "71",
+    "岁",
+    "腹痛",
+    "咳嗽",
+    "就诊",
+    "血常规",
+    "提示",
+    "胆结石",
+    "给予",
+    "青霉素",
+    "电话",
+    "13532248137"
+  ],
+  "entities": [
+    {
+      "entity": "陈某",
+      "type": "姓名",
+      "start": 1,
+      "end": 3,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 4,
+      "end": 5,
+      "confidence": 0.7
+    },
+    {
+      "entity": "71",
+      "type": "年龄",
+      "start": 6,
+      "end": 8,
+      "confidence": 0.7
+    },
+    {
+      "entity": "腹痛",
+      "type": "症状",
+      "start": 9,
+      "end": 11,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咳嗽",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "血常规",
+      "type": "检查项目",
+      "start": 15,
+      "end": 18,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胆结石",
+      "type": "疾病",
+      "start": 20,
+      "end": 23,
+      "confidence": 0.7
+    },
+    {
+      "entity": "青霉素",
+      "type": "药物",
+      "start": 25,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "13532248137",
+      "type": "电话",
+      "start": 29,
+      "end": 40,
+      "confidence": 0.7
+    }
+  ]
+}

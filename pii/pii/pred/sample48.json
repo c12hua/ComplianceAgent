@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "郑某",
+    "，",
+    "女",
+    "，",
+    "35",
+    "岁",
+    "咽痛",
+    "入院",
+    "B超",
+    "提示",
+    "脑梗死",
+    "给予",
+    "阿司匹林",
+    "支付信息",
+    "P383484016"
+  ],
+  "entities": [
+    {
+      "entity": "郑某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "35",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "咽痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "脑梗死",
+      "type": "疾病",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "阿司匹林",
+      "type": "药物",
+      "start": 24,
+      "end": 28,
+      "confidence": 0.7
+    },
+    {
+      "entity": "P383484016",
+      "type": "支付信息",
+      "start": 32,
+      "end": 42,
+      "confidence": 0.7
+    }
+  ]
+}

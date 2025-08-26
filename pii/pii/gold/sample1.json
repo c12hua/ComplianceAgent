@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "李某",
+    "，",
+    "女",
+    "，",
+    "76",
+    "岁",
+    "咽痛",
+    "头痛",
+    "入院",
+    "CT",
+    "提示",
+    "乙肝",
+    "给予",
+    "降压药",
+    "邮箱",
+    "李某76@example.com"
+  ],
+  "entities": [
+    {
+      "entity": "李某",
+      "type": "姓名",
+      "start": 1,
+      "end": 2
+    },
+    {
+      "entity": "女",
+      "type": "性别",
+      "start": 3,
+      "end": 4
+    },
+    {
+      "entity": "76岁",
+      "type": "年龄",
+      "start": 5,
+      "end": 7
+    },
+    {
+      "entity": "咽痛",
+      "type": "症状",
+      "start": 7,
+      "end": 8
+    },
+    {
+      "entity": "乙肝",
+      "type": "疾病",
+      "start": 12,
+      "end": 13
+    },
+    {
+      "entity": "降压药",
+      "type": "药物",
+      "start": 14,
+      "end": 15
+    },
+    {
+      "entity": "李某76@example.com",
+      "type": "邮箱",
+      "start": 16,
+      "end": 17
+    },
+    {
+      "entity": "头痛",
+      "type": "症状",
+      "start": 8,
+      "end": 9
+    }
+  ]
+}

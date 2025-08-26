@@ -1,0 +1,71 @@
+{
+  "tokens": [
+    "患者",
+    "褚某",
+    "，",
+    "男",
+    "，",
+    "47",
+    "岁",
+    "胸痛",
+    "就诊",
+    "心电图",
+    "提示",
+    "脑梗死",
+    "给予",
+    "氯吡格雷",
+    "身份证号",
+    "631260195501016084"
+  ],
+  "entities": [
+    {
+      "entity": "褚某",
+      "type": "姓名",
+      "start": 2,
+      "end": 4,
+      "confidence": 0.7
+    },
+    {
+      "entity": "男",
+      "type": "性别",
+      "start": 5,
+      "end": 6,
+      "confidence": 0.7
+    },
+    {
+      "entity": "47",
+      "type": "年龄",
+      "start": 7,
+      "end": 9,
+      "confidence": 0.7
+    },
+    {
+      "entity": "胸痛",
+      "type": "症状",
+      "start": 11,
+      "end": 13,
+      "confidence": 0.7
+    },
+    {
+      "entity": "脑梗死",
+      "type": "疾病",
+      "start": 18,
+      "end": 21,
+      "confidence": 0.7
+    },
+    {
+      "entity": "氯吡格雷",
+      "type": "药物",
+      "start": 23,
+      "end": 27,
+      "confidence": 0.7
+    },
+    {
+      "entity": "631260195501016084",
+      "type": "身份证号",
+      "start": 30,
+      "end": 49,
+      "confidence": 0.7
+    }
+  ]
+}
