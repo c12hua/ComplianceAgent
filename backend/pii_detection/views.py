@@ -40,7 +40,7 @@ class TextProcessingTools:
             self.ltp_available = False
             logger.warning(f"LTP 初始化失败: {e}")
         
-        # 初始化spaCy PhraseMatcher（已禁用，保留代码结构）
+        # 初始化spaCy PhraseMatcher（用于医学符号标准化）
         try:
             import spacy
             from spacy.matcher import PhraseMatcher
@@ -48,34 +48,117 @@ class TextProcessingTools:
             self.nlp = spacy.blank("zh")
             self.matcher = PhraseMatcher(self.nlp.vocab, attr="TEXT")
             
-            # 医学术语和单位列表（已禁用，使用LTP原始分词）
-            # medical_terms = [
-            #     # 医学单位
-            #     'mg/L', 'μg/mL', 'mmHg', 'U/L', 'μmol/L', 'g/L', 'mmol/L',
-            #     '次/分', '°C', 'kg/m²', 'mL/min', 'ng/mL', 'pg/mL', 'IU/L',
-            #     '×10⁹/L', '×10¹²/L', 'mg/dL', 'g/dL', 'mEq/L', 'mg/kg',
-            #     'mg/m²', 'μg/kg', 'IU/mL', 'pmol/L', 'nmol/L', 'mol/L',
-            #     # 医学术语
-            #     '急性淋巴细胞白血病', 'ST段抬高', '肺动脉导管', '心肌梗死',
-            #     '高血压', '糖尿病', '冠心病', '脑梗死', '肺炎', '肝硬化',
-            #     '慢性肾病', '甲状腺功能亢进', '类风湿关节炎', '系统性红斑狼疮',
-            #     # 检查项目
-            #     '心电图', '胸部CT', 'MRI', '超声心动图', '血常规', '肝功能',
-            #     '肾功能', '血糖', '血脂', '甲状腺功能', '肿瘤标志物'
-            # ]
-            # 
-            # # 将术语转换为Doc对象并添加到匹配器
-            # patterns = [self.nlp.make_doc(term) for term in medical_terms]
-            # self.matcher.add("MEDICAL_TERMS", patterns)
+            # 医学符号映射字典
+            self.symbol_map = {
+                "↑": "高于正常范围",
+                "↓": "低于正常范围",
+                "H": "高于正常范围",
+                "L": "低于正常范围",
+                "+": "阳性",
+                "-": "阴性",
+                "±": "弱阳性",
+                "++": "阳性（中度）",
+                "+++": "阳性（重度）",
+                "++++": "阳性（极重度）",
+                "N": "正常",
+                "NEG": "阴性",
+                "POS": "阳性",
+                "WNL": "在正常范围内",
+                "N/A": "不适用",
+                "--": "未检测",
+                "*": "异常值，需要关注"
+            }
+            
+            # 医学单位标准化映射表
+            self.medical_unit_map = {
+                # 浓度
+                "mg/L": "mg/L",
+                "μg/mL": "μg/mL", "ug/mL": "μg/mL",
+                "ng/mL": "ng/mL", "ng/L": "ng/L",
+                "pg/mL": "pg/mL",
+                "pmol/L": "pmol/L",
+                "nmol/L": "nmol/L",
+                "μmol/L": "μmol/L", "umol/L": "μmol/L",
+                "mmol/L": "mmol/L",
+                "mol/L": "mol/L",
+                "mg/dL": "mg/dL", "mg/100mL": "mg/dL",
+                "g/dL": "g/dL",
+                "g/L": "g/L",
+                "mEq/L": "mmol/L",
+                
+                # 活性/酶学
+                "U/L": "U/L",
+                "IU/L": "IU/L",
+                "IU/mL": "IU/mL",
+                "mIU/L": "mIU/L",
+                "μIU/mL": "μIU/mL",
+                "kU/L": "kU/L",
+                "U/gHb": "U/gHb",
+                
+                # 血液学（计数）
+                "×10⁹/L": "10^9/L", "10^9/L": "10^9/L",
+                "×10¹²/L": "10^12/L", "10^12/L": "10^12/L",
+                "fL": "fL",
+                "pL": "pL",
+                "μL": "μL", "uL": "μL",
+                
+                # 血气/生理
+                "mmHg": "mmHg",
+                "mL/min": "mL/min",
+                "L/min": "L/min",
+                "mL/dL": "mL/dL",
+                "vol%": "vol%",
+                "mOsm/kg": "mOsm/kg",
+                "mmol/kg": "mmol/kg",
+                
+                # 体格参数
+                "°C": "°C",
+                "次/分": "次/分",
+                "kg/m²": "kg/m²",
+                "mg/kg": "mg/kg",
+                "mg/m²": "mg/m²",
+                "μg/kg": "μg/kg",
+                
+                # 影像/尺寸/时间
+                "mm": "mm",
+                "cm": "cm",
+                "Hz": "Hz",
+                "kHz": "kHz",
+                "MHz": "MHz",
+                "ms": "ms",
+                "s": "s",
+                "min": "min",
+                "h": "h",
+                
+                # 微生物学
+                "copies/mL": "copies/mL",
+                "PFU/mL": "PFU/mL",
+                "CFU/mL": "CFU/mL",
+                "TCID50/mL": "TCID50/mL",
+            }
+            
+            # 创建符号匹配模式（按长度排序，优先匹配长符号）
+            symbols = sorted(self.symbol_map.keys(), key=len, reverse=True)
+            patterns = [self.nlp.make_doc(symbol) for symbol in symbols]
+            self.matcher.add("MEDICAL_SYMBOLS", patterns)
+            
+            # 创建医学单位匹配器（用于保护单位不被符号替换）
+            self.unit_matcher = PhraseMatcher(self.nlp.vocab, attr="TEXT")
+            units = sorted(self.medical_unit_map.keys(), key=len, reverse=True)
+            unit_patterns = [self.nlp.make_doc(unit) for unit in units]
+            self.unit_matcher.add("MEDICAL_UNITS", unit_patterns)
             
             self.spacy_available = True
-            logger.info("✅ spaCy PhraseMatcher 初始化成功")
+            logger.info("✅ spaCy PhraseMatcher 初始化成功（医学符号标准化已启用）")
             
         except ImportError as e:
             self.nlp = None
             self.matcher = None
+            self.unit_matcher = None
+            self.symbol_map = {}
+            self.medical_unit_map = {}
             self.spacy_available = False
-            logger.warning(f"spaCy 初始化失败: {e}")
+            logger.warning(f"spaCy 初始化失败: {e}，医学符号标准化功能不可用")
 
         self.opencc = OpenCC('t2s')
         
@@ -126,7 +209,7 @@ class TextProcessingTools:
         self.time_pattern = re.compile(r'\b\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?\b', re.IGNORECASE)
         
         # 其他标点删除
-        self.punct_remove_pattern = re.compile(r'[、:""''【】\[\]]')
+        self.punct_remove_pattern = re.compile(r'[、""''【】\[\]]')
         
         # 日期格式
         self.date_pattern = re.compile(
@@ -309,6 +392,11 @@ class PiiDetectView(APIView):
         # 繁体转简体
         text = text_tools.opencc.convert(text)
         
+        # 医学符号标准化（先标准化单位，再处理符号）
+        if text_tools.spacy_available:
+            text = self._standardize_medical_units(text)
+            text = self._standardize_medical_symbols(text)
+        
         return text, scientific_notations
     
     def _process_sentences(self, text: str) -> list:
@@ -338,8 +426,8 @@ class PiiDetectView(APIView):
             
             s = text_tools.time_pattern.sub(protect_time_colon, s)
             
-            # 删除其他标点
-            s = text_tools.punct_remove_pattern.sub('', s)
+            # 删除其他标点（在删除前添加空格分隔）
+            s = text_tools.punct_remove_pattern.sub(' ', s)
             
             # 恢复时间格式
             for i, time_colon in enumerate(time_colons):
@@ -374,6 +462,119 @@ class PiiDetectView(APIView):
             return dt.strftime('%Y-%m-%d')
         except Exception:
             return date_str
+    
+    def _standardize_medical_units(self, text: str) -> str:
+        """
+        标准化医学单位
+        """
+        try:
+            # 创建spaCy文档
+            doc = text_tools.nlp(text)
+            
+            # 获取匹配的单位
+            matches = text_tools.unit_matcher(doc)
+            
+            if not matches:
+                return text
+            
+            # 按位置排序匹配结果（从后往前替换，避免位置偏移）
+            matches = sorted(matches, key=lambda x: x[1], reverse=True)
+            
+            # 替换匹配的单位
+            result_text = text
+            for match_id, start, end in matches:
+                span = doc[start:end]
+                matched_unit = span.text
+                replacement = text_tools.medical_unit_map.get(matched_unit, matched_unit)
+                
+                # 计算字符位置并替换
+                char_start = span.start_char
+                char_end = span.end_char
+                result_text = result_text[:char_start] + replacement + result_text[char_end:]
+            
+            return result_text
+            
+        except Exception as e:
+            logger.warning(f"医学单位标准化失败: {e}")
+            return text
+    
+    def _standardize_medical_symbols(self, text: str) -> str:
+        """
+        使用spaCy匹配和替换医学符号为标准化含义
+        """
+        try:
+            # 创建spaCy文档
+            doc = text_tools.nlp(text)
+            
+            # 先获取医学单位的位置，避免在单位中替换符号
+            unit_matches = text_tools.unit_matcher(doc)
+            protected_ranges = set()
+            for match_id, start, end in unit_matches:
+                for i in range(start, end):
+                    protected_ranges.add(i)
+            
+            # 获取匹配的符号
+            symbol_matches = text_tools.matcher(doc)
+            
+            if not symbol_matches:
+                return text
+            
+            # 按位置排序匹配结果（从后往前替换，避免位置偏移）
+            symbol_matches = sorted(symbol_matches, key=lambda x: x[1], reverse=True)
+            
+            # 替换匹配的符号
+            result_text = text
+            for match_id, start, end in symbol_matches:
+                # 检查是否在受保护的单位范围内
+                if any(i in protected_ranges for i in range(start, end)):
+                    continue
+                    
+                span = doc[start:end]
+                matched_symbol = span.text
+                
+                # 检查是否为独立的符号（避免误匹配字母）
+                if self._is_valid_symbol_match(doc, start, end, matched_symbol):
+                    replacement = text_tools.symbol_map.get(matched_symbol, matched_symbol)
+                    
+                    # 计算字符位置并替换
+                    char_start = span.start_char
+                    char_end = span.end_char
+                    result_text = result_text[:char_start] + replacement + result_text[char_end:]
+            
+            return result_text
+            
+        except Exception as e:
+            logger.warning(f"医学符号标准化失败: {e}")
+            return text
+    
+    def _is_valid_symbol_match(self, doc, start: int, end: int, symbol: str) -> bool:
+        """
+        验证符号匹配是否有效，避免误匹配字母
+        """
+        # 对于单字母符号（H, L, N），需要更严格的上下文检查
+        if symbol in ['H', 'L', 'N'] and len(symbol) == 1:
+            # 检查前后是否有数字或特定医学上下文
+            prev_token = doc[start-1] if start > 0 else None
+            next_token = doc[end] if end < len(doc) else None
+            
+            # 如果前面是数字，后面是空格或标点，可能是检验结果
+            if prev_token and prev_token.text.replace('.', '').replace(',', '').isdigit():
+                return True
+            
+            # 如果在医学检验相关的上下文中
+            context_words = []
+            for i in range(max(0, start-3), min(len(doc), end+3)):
+                context_words.append(doc[i].text.lower())
+            
+            medical_context = ['血', '尿', '检', '验', '结果', '报告', '值', '范围', '正常', '异常']
+            if any(word in ''.join(context_words) for word in medical_context):
+                return True
+            
+            # 否则可能是普通字母，不替换
+            return False
+        
+        # 对于符号类（+, -, ↑, ↓等）和多字符缩写（NEG, POS等），直接匹配
+        return True
     
     def _restore_placeholders(self, text: str, scientific_notations: list) -> str:
         """
