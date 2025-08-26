@@ -173,7 +173,7 @@ class TextProcessingTools:
         self.html_tag_pattern = re.compile(r'<[^>]+>')
         
         # 噪音字符
-        self.noise_pattern = re.compile(r'[#*]{3,}')
+        self.noise_pattern = re.compile(r'[@$￥#*]{3,}')
         
         # 科学计数法
         self.scientific_pattern = re.compile(r'(\d+(?:\.\d+)?)\s*×\s*10\s*[⁰¹²³⁴⁵⁶⁷⁸⁹]+')
@@ -672,7 +672,7 @@ class PiiDetectView(APIView):
 
         cleaned_tokens = []
         for token in tokens:
-            cleaned_token = re.sub(r'[\s()（）【】\[\]]', '', token)
+            cleaned_token = re.sub(r'[\s():：（）【】\[\]]', '', token)
             if cleaned_token:
                 cleaned_tokens.append(cleaned_token)
         
