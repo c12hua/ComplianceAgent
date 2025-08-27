@@ -48,25 +48,53 @@ class TextProcessingTools:
             self.nlp = spacy.blank("zh")
             self.matcher = PhraseMatcher(self.nlp.vocab, attr="TEXT")
             
-            # 医学符号映射字典
             self.symbol_map = {
+                # 箭头类
                 "↑": "高于正常范围",
                 "↓": "低于正常范围",
+                "↑↑": "显著高于正常范围",
+                "↓↓": "显著低于正常范围",
+                "↑↑↑": "极度高于正常范围",
+                "↓↓↓": "极度低于正常范围",
+                
+                # 字母类
                 "H": "高于正常范围",
                 "L": "低于正常范围",
+                "N": "正常",
+                "A": "异常",
+                "Abn": "异常",
+                
+                # 阴阳性类
                 "+": "阳性",
                 "-": "阴性",
                 "±": "弱阳性",
                 "++": "阳性（中度）",
                 "+++": "阳性（重度）",
                 "++++": "阳性（极重度）",
-                "N": "正常",
                 "NEG": "阴性",
                 "POS": "阳性",
+                
+                # 程度分级（数字）
+                "1+": "阳性（轻度）",
+                "2+": "阳性（中度）",
+                "3+": "阳性（重度）",
+                "4+": "阳性（极重度）",
+                
+                # 状态描述类
                 "WNL": "在正常范围内",
-                "N/A": "不适用",
+                "N/A": "不适用/未检测",
                 "--": "未检测",
-                "*": "异常值，需要关注"
+                "trace": "微量",
+                "small": "少量",
+                "moderate": "中量",
+                "large": "大量",
+                
+                # 特殊标志
+                "*": "异常值/临界值，需要重点关注", # 解释更明确
+                "**": "高度异常值/危急值",
+                "<": "低于检测下限",
+                ">": "高于检测上限",
+                "~": "约/近似",
             }
             
             # 医学单位标准化映射表
@@ -686,7 +714,8 @@ class PiiDetectView(APIView):
         保存路径：/backend/knowledge_base/text/
         """
         try:
-            output_dir = "/backend/knowledge_base/text/"
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            output_dir = os.path.join(current_dir, "..", "knowledge_base", "text")
             os.makedirs(output_dir, exist_ok=True)
 
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
