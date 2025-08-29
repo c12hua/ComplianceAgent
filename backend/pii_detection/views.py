@@ -55,46 +55,7 @@ class TextProcessingTools:
                 "↑↑": "显著高于正常范围",
                 "↓↓": "显著低于正常范围",
                 "↑↑↑": "极度高于正常范围",
-                "↓↓↓": "极度低于正常范围",
-                
-                # 字母类
-                "H": "高于正常范围",
-                "L": "低于正常范围",
-                "N": "正常",
-                "A": "异常",
-                "Abn": "异常",
-                
-                # 阴阳性类
-                "+": "阳性",
-                "-": "阴性",
-                "±": "弱阳性",
-                "++": "阳性（中度）",
-                "+++": "阳性（重度）",
-                "++++": "阳性（极重度）",
-                "NEG": "阴性",
-                "POS": "阳性",
-                
-                # 程度分级（数字）
-                "1+": "阳性（轻度）",
-                "2+": "阳性（中度）",
-                "3+": "阳性（重度）",
-                "4+": "阳性（极重度）",
-                
-                # 状态描述类
-                "WNL": "在正常范围内",
-                "N/A": "不适用/未检测",
-                "--": "未检测",
-                "trace": "微量",
-                "small": "少量",
-                "moderate": "中量",
-                "large": "大量",
-                
-                # 特殊标志
-                "*": "异常值/临界值，需要重点关注", # 解释更明确
-                "**": "高度异常值/危急值",
-                "<": "低于检测下限",
-                ">": "高于检测上限",
-                "~": "约/近似",
+                "↓↓↓": "极度低于正常范围",   
             }
             
             # 医学单位标准化映射表
@@ -177,7 +138,7 @@ class TextProcessingTools:
             self.unit_matcher.add("MEDICAL_UNITS", unit_patterns)
             
             self.spacy_available = True
-            logger.info("✅ spaCy PhraseMatcher 初始化成功（医学符号标准化已启用）")
+            logger.info("✅ spaCy PhraseMatcher 初始化成功")
             
         except ImportError as e:
             self.nlp = None
@@ -197,11 +158,11 @@ class TextProcessingTools:
     
     def _compile_regex_patterns(self):
         """预编译所有正则表达式"""
-        # HTML标签
-        self.html_tag_pattern = re.compile(r'<[^>]+>')
+        # HTML标签（仅匹配以字母开头的有效标签，避免误删如 <文本>）
+        self.html_tag_pattern = re.compile(r'</?\s*[a-zA-Z][^>]*>')
         
         # 噪音字符
-        self.noise_pattern = re.compile(r'[@$￥#*]{3,}')
+        self.noise_pattern = re.compile(r'[@#*]{3,}')
         
         # 科学计数法
         self.scientific_pattern = re.compile(r'(\d+(?:\.\d+)?)\s*×\s*10\s*[⁰¹²³⁴⁵⁶⁷⁸⁹]+')
@@ -385,6 +346,19 @@ class PiiDetectView(APIView):
             scientific_notations.append(match.group(0))
             return placeholder
         text = text_tools.scientific_pattern.sub(protect_scientific_notation, text)
+
+        # 性别符号标准化
+        text = text.replace('♂', '男').replace('♀', '女')
+
+        # 合并重复乘号，仅保留一个
+        text = re.sub(r'×{2,}', '×', text)
+
+        # 保护立方单位，避免 ³ 被归一化为 3
+        try:
+            text = re.sub(r'(?<=/)\b(mm|cm|m)³\b', r'\1^3', text)
+            text = re.sub(r'\b(mm|cm|m)³\b', r'\1^3', text)
+        except Exception:
+            pass
         
         # 标准化数学符号
         math_symbols = {
@@ -394,6 +368,22 @@ class PiiDetectView(APIView):
         for symbol, replacement in math_symbols.items():
             text = text.replace(symbol, replacement)
         
+        # 保护时间，避免后续将冒号替换为空格
+        time_placeholders = []
+        def protect_time(match):
+            placeholder = f"__TIME_{len(time_placeholders)}__"
+            time_placeholders.append(match.group(0))
+            return placeholder
+        text = text_tools.time_pattern.sub(protect_time, text)
+
+        # 将具有分词作用的标点替换为空格（不包括分句符号与逗号/句内点）
+        # 包括：冒号、单双引号、各类括号
+        text = re.sub(r'[\:\："\“\”\'\'\‘\’\(\)（）\[\]【】]', ' ', text)
+
+        # 恢复时间占位符
+        for i, t in enumerate(time_placeholders):
+            text = text.replace(f"__TIME_{i}__", t)
+
         # Unicode标准化和换行符处理
         text = unicodedata.normalize('NFKC', text)
         text = text.replace('\r\n', '\n').replace('\r', '\n')
@@ -633,14 +623,14 @@ class PiiDetectView(APIView):
                     tokenized_sentence = "['" + "', '".join(tokens) + "']"
                     tokenized_sentences.append(tokenized_sentence)
             
-            # 创建完整的结构化文本
+            # 创建完整的结构化文本（保持原有格式用于返回）
             structured_text = "".join(tokenized_sentences) if tokenized_sentences else ""
-            
+
             logger.info(f"分词分句完成，句子数量: {len(tokenized_sentences)}")
             logger.info(f"结构化文本示例: {structured_text[:200]}...")
 
             self.save_structured_text(structured_text)
-            
+
             return {
                 'structured_text': structured_text,
                 'tokenized_sentences': tokenized_sentences,
@@ -692,20 +682,98 @@ class PiiDetectView(APIView):
         """
         对单个句子进行分词 - 使用LTP分词
         """
-        # 使用LTP进行分词
-        result = text_tools.ltp.pipeline([sentence], tasks=["cws"])
-        tokens = result.cws[0] if hasattr(result, 'cws') else result['cws'][0]
+        # 使用空格作为硬切分边界：先按空格切段，再分别用LTP分词
+        parts = [p for p in re.split(r'\s+', sentence.strip()) if p]
+        if not parts:
+            return []
+
+        ltp_result = text_tools.ltp.pipeline(parts, tasks=["cws"])
+        parts_cws = ltp_result.cws if hasattr(ltp_result, 'cws') else ltp_result['cws']
+
+        tokens = []
+        for seg_tokens in parts_cws:
+            tokens.extend(seg_tokens)
         
         logger.info(f"LTP分词结果: {tokens}")
 
         cleaned_tokens = []
         for token in tokens:
-            cleaned_token = re.sub(r'[\s():：（）【】\[\]]', '', token)
+            # 若是时间格式，保留冒号
+            if text_tools.time_pattern.fullmatch(token):
+                cleaned_token = re.sub(r'[\s\(\)（）【】\[\]\"\“\”\'\'\‘\’]', '', token)
+            else:
+                # 分词后再清理：冒号、单双引号、括号等具有分词效果的符号
+                cleaned_token = re.sub(r'[\s:\：\(\)（）【】\[\]\"\“\”\'\'\‘\’]', '', token)
             if cleaned_token:
                 cleaned_tokens.append(cleaned_token)
-        
-        return cleaned_tokens
-    
+
+        # 合并医学术语（剂量和单位）
+        merged_tokens = self._merge_medical_terms(cleaned_tokens)
+
+        return merged_tokens
+
+    def _merge_medical_terms(self, tokens: list) -> list:
+        """
+        合并常见医学用药表达（剂量+单位，频次，给药途径）
+        例如：['0.2', 'g', 'tid', 'po'] -> ['0.2g', 'tid', 'po']
+        """
+        if not tokens:
+            return tokens
+
+        # 统一使用小写进行集合匹配
+        unit_set = {
+            'mg', 'g', 'μg', 'ug', 'mcg', 'kg', 'ml', 'l', 'iu', 'u', 'ul', 'μl',
+            'gtt', '片', '粒', '袋', '支', '滴'
+        }
+        freq_set = {
+            'qd', 'bid', 'tid', 'qid', 'qod', 'qam', 'qpm', 'qn', 'qhs', 'hs',
+            'q1h', 'q2h', 'q3h', 'q4h', 'q6h', 'q8h', 'q12h', 'q24h', 'q48h', 'q72h',
+            'prn', 'stat', 'ac', 'pc', 'biw', 'tiw', 'qwk'
+        }
+        route_set = {
+            'po', 'iv', 'im', 'sc', 'sl', 'pr', 'top', 'inh', 'id', 'it', 'ia',
+            'oph', 'otic', 'nasal', 'pv', 'buccal', 'transdermal'
+        }
+
+        def is_number_token(t: str) -> bool:
+            return bool(re.fullmatch(r'\d+(?:\.\d+)?', t))
+
+        merged = []
+        i = 0
+        n = len(tokens)
+        while i < n:
+            t = tokens[i]
+            tl = t.lower()
+            # 合并 数字 + 单位（如 0.2 g -> 0.2g）
+            if i + 1 < n and is_number_token(t) and tokens[i+1].lower() in unit_set:
+                merged_tok = f"{t}{tokens[i+1].lower()}"
+                # 进一步合并如 0.2g / kg -> 0.2g/kg
+                if i + 3 < n and tokens[i+2] == '/' and tokens[i+3].lower() in {'kg', 'm2', 'm^2', 'm²', 'd', 'day', 'h', 'hr'}:
+                    qual = tokens[i+3].lower().replace('m2', 'm^2').replace('m²', 'm^2').replace('hr', 'h').replace('day', 'd')
+                    merged.append(f"{merged_tok}/{qual}")
+                    i += 4
+                    continue
+                merged.append(merged_tok)
+                i += 2
+                continue
+            # 合并 单位 / 限定（如 mg / kg -> mg/kg）
+            if i + 2 < n and tl in unit_set and tokens[i+1] == '/' and tokens[i+2].lower() in {'kg', 'm2', 'm^2', 'm²', 'd', 'day', 'h', 'hr'}:
+                qual = tokens[i+2].lower().replace('m2', 'm^2').replace('m²', 'm^2').replace('hr', 'h').replace('day', 'd')
+                merged.append(f"{tl}/{qual}")
+                i += 3
+                continue
+            # 其它直接加入
+            merged.append(t)
+            i += 1
+
+        normalized = []
+        for t in merged:
+            if t.lower() in freq_set or t.lower() in route_set:
+                normalized.append(t.lower())
+            else:
+                normalized.append(t)
+
+        return normalized
 
     def save_structured_text(self, structured_text: str):
         """
@@ -714,8 +782,7 @@ class PiiDetectView(APIView):
         保存路径：/backend/knowledge_base/text/
         """
         try:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            output_dir = os.path.join(current_dir, "..", "knowledge_base", "text")
+            output_dir = "/backend/knowledge_base/text/"
             os.makedirs(output_dir, exist_ok=True)
 
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -734,7 +801,7 @@ class PiiDetectView(APIView):
             logger.info(f"结构化文本已保存到: {filepath}")
             
         except Exception as e:
-            logger.error(f"保存结构化文本失败: {e}")
+            logger.error(f"保存结构化文本失败: {e}")      
 
     def post(self, request):
         text = request.data.get("text", None)
