@@ -52,8 +52,7 @@ class TokenizationEvaluator:
 
     def get_auto_tokens(self, text: str) -> List[str]:
         try:
-            normalized_result = self.pii_detector.normalize_text(text)
-            structured_text = normalized_result.get('structured_text', {})
+            structured_text = self.pii_detector.process_text_with_standardization(text)
             tokens: List[str] = []
             for sentence_tokens in structured_text.get('tokenized_sentences', []):
                 if sentence_tokens.startswith('[') and sentence_tokens.endswith(']'):

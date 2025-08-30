@@ -12,6 +12,12 @@ services:
     env_file:
       - backend/.env
     restart: always
+    volumes:                    # ⬅️ 新增/修改
+      # 把本地后端源码挂进容器，实时生效
+      - ./backend:/app
+      # 避免把宿主机可能出现的 __pycache__、.pyc 带进去
+      - /app/__pycache__
+      - /app/**/*.pyc
 
   frontend:
     build:
