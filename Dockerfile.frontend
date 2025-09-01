@@ -7,7 +7,7 @@ WORKDIR /app
 COPY frontend/ /app/
 
 # 安装依赖
-RUN npm install
+RUN npm install --verbose
 
 # 开发环境配置
 ENV HOST 0.0.0.0
