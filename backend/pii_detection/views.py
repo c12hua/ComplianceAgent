@@ -65,6 +65,37 @@ class PiiDetectView(APIView):
         else:
             raise ValueError('Unsupported file type')
 
+    def process_text_with_standardization(self, text: str) -> dict:
+        """
+        对文本进行标准化、分词和结构化处理
+        """
+        try:
+            from .text_processor import text_processor
+            # 调用文本标准化和分词功能
+            normalized_result = text_processor.normalize_text(text)
+            logger.info(f"文本标准化完成，原长度: {normalized_result['original_length']}, 标准化后长度: {normalized_result['normalized_length']}")
+            logger.info(f"标准化文本: {normalized_result['normalized_text'][:100]}...")  # 记录前100个字符用于调试
+            
+            return normalized_result
+        except Exception as e:
+            logger.error(f"文本标准化处理失败: {e}")
+            import traceback
+            logger.error(f"详细错误信息: {traceback.format_exc()}")
+            # 返回错误结果
+            return {
+                'normalized_text': text,
+                'sentences': [text],
+                'paragraphs': [text],
+                'original_length': len(text),
+                'normalized_length': len(text),
+                'structured_text': {
+                    'structured_text': text,
+                    'tokenized_sentences': [text],
+                    'sentence_count': 1,
+                    'error': str(e)
+                }
+            }
+    
     def preprocess_input(self, text_data):
         """
         预处理输入数据，将输入直接当作tokens格式处理
@@ -127,6 +158,11 @@ class PiiDetectView(APIView):
         # 使用deepseek方法
         from .deepseek_client import detect_pii_with_deepseek
 
+        # 文本标准化和分词处理
+        logger.info("进入文本标准化和分词处理流程")
+        normalized_result = self.process_text_with_standardization(extracted_text)
+        normalized_text = normalized_result['normalized_text']
+
         # 处理tokens（现在总是有tokens）
         logger.info("进入tokens处理流程")
         # 导入中间层处理函数
@@ -135,7 +171,7 @@ class PiiDetectView(APIView):
         processed_result = process_tokens_with_pipeline(tokens)
         logger.info(f"中间层处理结果: {processed_result}")
         # 将处理后的结果作为文本传递给大模型，同时传递实体信息用于构建更准确的prompt
-        result = detect_pii_with_deepseek(processed_result.get("text", extracted_text),
+        result = detect_pii_with_deepseek(processed_result.get("text", normalized_text),
                                           processed_result.get("entities", []))
 
         logger.info(f"检测结果: {result}")
@@ -157,4 +193,3 @@ class PiiDetectView(APIView):
             "text": extracted_text,
             "tokens": tokens  # 返回tokens信息（如果有）
         }, status=status.HTTP_201_CREATED)
-
