@@ -1,18 +1,19 @@
 FROM node:18
 
-# 设置工作目录
 WORKDIR /app
 
-# 拷贝前端代码
-COPY frontend/ /app/
+# 先复制 package.json 和 lock 文件（npm/yarn/pnpm 需要）
+COPY frontend/package*.json ./
 
-# 安装依赖
+# 安装依赖（缓存依赖层）
 RUN npm install --verbose
+
+# 再复制前端源码
+COPY frontend/ /app/
 
 # 开发环境配置
 ENV HOST 0.0.0.0
 ENV PORT 8080
 ENV CHOKIDAR_USEPOLLING=true
 
-# 启动开发服务器（Vite 或 Vue CLI）
 CMD ["npm", "run", "dev"]

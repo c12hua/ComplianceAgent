@@ -1,15 +1,22 @@
-FROM python:3.10
+FROM python:3.12
 
 WORKDIR /app
 
-COPY backend/ /app/
-COPY entrypoint.sh /entrypoint.sh
+# 先复制依赖文件（这一层缓存最关键）
+COPY backend/requirements.txt /app/
 
+# 安装依赖
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt
+
+# 再复制其余代码（这样依赖不会因代码改动而重装）
+COPY backend/ /app/
+
+# 复制入口脚本
+COPY entrypoint.sh /entrypoint.sh
 RUN apt-get update && apt-get install -y postgresql-client \
-    && pip install --upgrade pip \
-    && pip install -r requirements.txt \
+    && sed -i 's/\r$//' /entrypoint.sh \
     && chmod +x /entrypoint.sh
 
-RUN pip install --upgrade pip && pip install -r requirements.txt
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

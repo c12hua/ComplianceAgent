@@ -4,4 +4,4 @@ from .models import PiiDetectionRecord
 class PiiDetectionRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = PiiDetectionRecord
-        fields = '__all__'
+    fields = '__all__'

@@ -96,10 +96,10 @@
                 <p class="section-description">根据相关法律法规，以下信息需要重点保护</p>
               </div>
               <div class="details-grid">
-                <div v-for="(detail, index) in displayedDetails" 
-                     :key="index" 
-                     class="detail-card"
-                     :class="detail.risk_level">
+       <div v-for="(detail, index) in displayedDetails" 
+         :key="index" 
+         class="detail-card"
+         :class="detail.risk_level">
                   <div class="detail-header">
                     <div class="detail-header-main">
                       <div class="risk-tag" :class="detail.risk_level">
@@ -163,6 +163,22 @@
                       </div>
                       <div class="detail-reason">
                         <p>{{ detail.reason }}</p>
+                      </div>
+                    </div>
+                    <!-- 向量检索命中 (可折叠) -->
+                    <div v-if="detail.matches?.length" class="matches-section">
+                      <div class="matches-header">
+                        <h4>检索证据</h4>
+                        <button class="toggle-matches" @click="toggleMatches(index)">
+                          {{ detail._showMatches ? '收起' : `展开 ${detail.matches.length} 条证据` }}
+                        </button>
+                      </div>
+                      <div v-if="detail._showMatches" class="matches-list">
+                        <div v-for="(m, mi) in detail.matches" :key="mi" class="match-item">
+                          <div class="match-score">分数: {{ m.score }}</div>
+                          <div class="match-snippet">{{ m.text_snippet || m.snippet || m.answer || m.related_text }}</div>
+                          <div class="match-related" v-if="m.related_answers">相关回答: {{ m.related_answers.join(' | ') }}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -237,7 +253,7 @@ const displayedSummary = ref({  // 用于显示风险概览
   total_entities: 0,
   overall_reason: ''
 })
-const displayedDetails = ref([])  // 用于显示详细信息
+const displayedDetails = ref([])  // 用于显示详细信息 (每个 detail may include .matches)
 const isTyping = ref(false)  // 是否正在打字
 const currentStep = ref(0)  // 当前展示步骤
 
@@ -340,15 +356,17 @@ const animateResults = async (skipText = false) => {
     // 步骤3: 逐个显示详细信息
     if (piiResult.value.details?.length) {
       currentStep.value = 3
-      displayedDetails.value = []  // 清空现有详情
+        displayedDetails.value = []  // 清空现有详情
       
       for (const detail of piiResult.value.details) {
         // 创建新的详情对象
-        const newDetail = {
-          risk_level: detail.risk_level,
-          entities: [],
-          reason: ''
-        }
+          const newDetail = {
+            risk_level: detail.risk_level,
+            entities: [],
+            reason: '',
+            // matches 是后端增加的向量检索证据数组 (可选)
+            matches: detail.matches || []
+          }
         displayedDetails.value.push(newDetail)
         
         // 显示实体
@@ -357,8 +375,8 @@ const animateResults = async (skipText = false) => {
           newDetail.entities.push(entity)
         }
         
-        // 设置原因文本
-        newDetail.reason = detail.reason
+  // 设置原因文本
+  newDetail.reason = detail.reason
         await new Promise(resolve => setTimeout(resolve, stepDelay))
       }
     }
@@ -393,16 +411,66 @@ const detectPII = async () => {
     
     // 发送请求并等待响应
     const response = await apiDetectPII(originalText, selectedModel.value)
-    piiResult.value = response.data
-    
-    // 开始动画展示分析结果
-    await animateResults(true)  // true 表示跳过原始文本显示
+    // 后端返回的数据可能包含独立的 fields:
+    // - entities: [{entity, type}, ...]
+    // - entity_assessments: { '<entity>': {risk, reason}, ... }
+    // - entity_vector_matches: { '<entity>': [ {score, text_snippet, metadata, related_answers}, ... ] }
+    const data = response.data || {}
+
+    // 构建合并后的 details 数组，兼容后端直接返回 details 的场景
+    let details = []
+    if (Array.isArray(data.details) && data.details.length) {
+      // 如果后端已经返回 details，尽量使用并补充 matches/assessment
+      details = data.details.map(d => ({
+        risk_level: d.risk_level || (data.entity_assessments && data.entity_assessments[d.entities?.[0]]?.risk) || '',
+        entities: d.entities || [],
+        reason: d.reason || (data.entity_assessments && data.entity_assessments[d.entities?.[0]]?.reason) || '',
+        matches: d.matches || (data.entity_vector_matches && data.entity_vector_matches[d.entities?.[0]]) || []
+      }))
+    } else if (Array.isArray(data.entities) && data.entities.length) {
+      // 从 entities 构建每个 detail
+      details = data.entities.map(e => {
+        const entText = typeof e === 'string' ? e : (e.entity || '')
+        return {
+          risk_level: (data.entity_assessments && data.entity_assessments[entText]?.risk) || '',
+          entities: [entText],
+          reason: (data.entity_assessments && data.entity_assessments[entText]?.reason) || '',
+          matches: (data.entity_vector_matches && data.entity_vector_matches[entText]) || []
+        }
+      })
+    }
+
+  // 将重构后的结构放回 piiResult 以供后续动画与渲染使用
+  piiResult.value = Object.assign({}, data, { details })
+
+  // 初始化显示用的 flags 并把 details 赋给 displayedDetails
+  displayedDetails.value = initDetailFlags(details)
+
+  // 开始动画展示分析结果（跳过原始文本显示）
+  await animateResults(true)
     
   } catch (error) {
     console.error('PII detection failed:', error)
   } finally {
     loading.value = false
   }
+}
+
+// Toggle showing matches for a detail card
+const toggleMatches = (index) => {
+  const d = displayedDetails.value[index]
+  if (!d) return
+  d._showMatches = !d._showMatches
+}
+
+// Ensure any details created have _showMatches default false
+// Watcher-like helper used when assigning displayedDetails
+const initDetailFlags = (details) => {
+  for (const d of details) {
+    if (d._showMatches === undefined) d._showMatches = false
+    if (!Array.isArray(d.matches)) d.matches = []
+  }
+  return details
 }
 </script>
 

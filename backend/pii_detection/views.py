@@ -1,4 +1,5 @@
 import json
+import re
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -144,8 +145,8 @@ class PiiDetectView(APIView):
             # 预处理输入数据
             logger.info(f"原始输入文本: {text}")
             extracted_text, tokens = self.preprocess_input(text)
-            #logger.info(f"预处理后文本: {extracted_text}")
-            #logger.info(f"预处理后tokens: {tokens}")
+            logger.info(f"预处理后文本: {extracted_text}")
+            logger.info(f"预处理后tokens: {tokens}")
         else:
             return Response({"error": "请上传文件或输入文本"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -163,33 +164,276 @@ class PiiDetectView(APIView):
         normalized_result = self.process_text_with_standardization(extracted_text)
         normalized_text = normalized_result['normalized_text']
 
-        # 处理tokens（现在总是有tokens）
-        logger.info("进入tokens处理流程")
-        # 导入中间层处理函数
-        from pii_detection.middleware import process_tokens_with_pipeline
-        # 使用中间层处理tokens
-        processed_result = process_tokens_with_pipeline(tokens)
-        logger.info(f"中间层处理结果: {processed_result}")
-        # 将处理后的结果作为文本传递给大模型，同时传递实体信息用于构建更准确的prompt
-        result = detect_pii_with_deepseek(processed_result.get("text", normalized_text),
-                                          processed_result.get("entities", []))
+        # 使用标准化后的文本作为检测内容（不使用 tokens）
+        logger.info(f"使用标准化文本进行PII检测，长度: {len(normalized_text)}")
 
-        logger.info(f"检测结果: {result}")
+        custom_instruction = (
+            '请仅返回严格的 JSON 对象，格式为：{"text":"<原文>","entities":[{"entity":"...","type":"..."}, ...]}。'
+            '不要输出任何额外说明或格式化文本。Entities 类型示例：姓名、身份证号、联系电话、症状、疾病、药物、检查项目、处方、支付信息、住址、年龄、性别、其他。'
+            '基于下面的标准化文本，识别并返回所有个人信息实体及其类型。'
+        )
+
+        try:
+            model_prompt = custom_instruction + "\n\nText:\n" + normalized_text
+        except Exception:
+            model_prompt = custom_instruction + "\n\nText:\n" + str(normalized_text)
+
+        # 调用底层 deepseek 接口，仅传入标准化文本和我们构造的 prompt（不传 tokens）
+        from .deepseek_client import deepseek_detect
+        llm_result = deepseek_detect(normalized_text, knowledge_base_prompt=model_prompt)
+        logger.info("llm_result内容：" + str(llm_result))
+        # 解析 LLM 返回，抽取 entities
+        entities_output = []
+        try:
+            if isinstance(llm_result, dict):
+                # 期望直接返回 {'text':..., 'entities':[...]} 或含有 'entities' 字段
+                if 'entities' in llm_result:
+                    entities_output = llm_result.get('entities') or []
+                elif 'details' in llm_result:
+                    # 兼容老结构：从 details 中提取实体字符串或 dict
+                    for d in llm_result.get('details', []):
+                        ents = d.get('entities', [])
+                        if isinstance(ents, list):
+                            for e in ents:
+                                if isinstance(e, dict) and 'entity' in e and 'type' in e:
+                                    entities_output.append(e)
+                                elif isinstance(e, str):
+                                    entities_output.append({"entity": e, "type": "未知"})
+            elif isinstance(llm_result, str):
+                # 尝试把字符串解析为 JSON
+                try:
+                    parsed = json.loads(llm_result)
+                    entities_output = parsed.get('entities', []) if isinstance(parsed, dict) else []
+                except Exception:
+                    entities_output = []
+        except Exception as e:
+            logger.error(f"解析 LLM 返回失败: {e}")
+            entities_output = []
+
+        
+
+        # 解析并设置风险等级（默认 未知）
+        risk_level = "未知"
+        if isinstance(llm_result, dict):
+            summary = llm_result.get('summary', {}) or {}
+            risk_level = summary.get('risk_level', '未知')
+
+        # 规范化 entities_output 为 [{'entity':..., 'type':...}, ...]
+        normalized_entities = []
+        for e in entities_output:
+            if isinstance(e, dict):
+                ent = e.get('entity') or e.get('text') or e.get('name') or ''
+                typ = e.get('type') or e.get('label') or '未知'
+                if ent:
+                    normalized_entities.append({"entity": ent, "type": typ})
+            elif isinstance(e, str):
+                normalized_entities.append({"entity": e, "type": "未知"})
+
+        # 将 llm_result 确保为 JSON dict，用于向量搜索的查询构建
+        llm_json = None
+        if isinstance(llm_result, dict):
+            llm_json = llm_result
+        else:
+            try:
+                llm_json = json.loads(llm_result) if isinstance(llm_result, str) else {"content": str(llm_result)}
+            except Exception:
+                llm_json = {"content": str(llm_result)}
+
+        # 构造向量搜索查询：优先使用 summary.overall_reason，其次使用实体文本拼接，最后回退到标准化文本
+        query_text = None
+        try:
+            summary = llm_json.get('summary', {}) if isinstance(llm_json, dict) else {}
+            overall_reason = summary.get('overall_reason') if isinstance(summary, dict) else None
+            if overall_reason:
+                query_text = overall_reason
+        except Exception:
+            query_text = None
+
+        if not query_text and normalized_entities:
+            # 使用实体文本作为查询（取前 20 个字符的拼接，避免过长）
+            try:
+                query_text = '；'.join([e['entity'] for e in normalized_entities if e.get('entity')])
+            except Exception:
+                query_text = None
+
+        if not query_text:
+            query_text = normalized_text or json.dumps(llm_json, ensure_ascii=False)
+
+        # 调用向量搜索器进行检索
+        vector_matches = []
+        try:
+            from .vector_store_test import VectorSearcher
+            searcher = VectorSearcher()
+            results = searcher.search(query_text, top_k=5)
+            # 只保留必要字段以序列化返回
+            for r in results:
+                # 打印每条向量检索命中，便于调试和查看匹配的问答内容
+                try:
+                    log_obj = {
+                        'id': r.get('id'),
+                        'score': r.get('score'),
+                        'metadata': r.get('metadata'),
+                        'text_snippet': (r.get('text') or '')[:400],
+                        'related_answers': r.get('related_answers', [])
+                    }
+                    logger.info("向量检索命中: " + json.dumps(log_obj, ensure_ascii=False))
+                except Exception as _e:
+                    logger.info(f"向量检索命中（无法序列化）: id={r.get('id')} score={r.get('score')}")
+
+                vector_matches.append({
+                    'id': r.get('id'),
+                    'text': r.get('text'),
+                    'metadata': r.get('metadata'),
+                    'score': r.get('score'),
+                    'related_answers': r.get('related_answers', [])
+                })
+        except Exception as e:
+            logger.error(f"向量检索失败: {e}")
+
+        # 对每个识别到的实体，分别进行向量检索并打印问题与答案，便于逐实体查看检索结果
+        entity_vector_matches = {}
+        entity_assessments = {}
+        try:
+            if 'searcher' in locals():
+                # 尝试用实体所在的句子（若有）作为检索查询，并在查询中加入实体类型提示
+                sentences = []
+                try:
+                    sentences = normalized_result.get('sentences', []) if isinstance(normalized_result, dict) else []
+                except Exception:
+                    sentences = []
+
+                for ent in normalized_entities:
+                    ent_text = ent.get('entity') if isinstance(ent, dict) else str(ent)
+                    ent_type = ent.get('type') if isinstance(ent, dict) else ''
+                    if not ent_text:
+                        continue
+
+                    # 找到包含实体的句子作为上下文
+                    context_sentence = None
+                    try:
+                        for s in sentences:
+                            if ent_text in s:
+                                context_sentence = s
+                                break
+                    except Exception:
+                        context_sentence = None
+
+                    # 构造更有语义信息的查询：优先使用实体类型+句子，其次实体本身
+                    if context_sentence:
+                        query_for_entity = f"实体类型:{ent_type} 上下文:{context_sentence}"
+                    else:
+                        query_for_entity = f"实体:{ent_text} 类型:{ent_type}"
+
+                    try:
+                        logger.info(f"开始对实体进行检索: {ent_text} -> 使用查询: {query_for_entity[:200]}")
+                        ent_results = searcher.search(query_for_entity, top_k=5)
+                        entity_matches = []
+
+                        for r in ent_results:
+                            md = r.get('metadata') or {}
+                            q_text = None
+                            answers = []
+                            if md.get('type') == 'question':
+                                q_text = r.get('text')
+                                answers = r.get('related_answers', [])
+                            elif md.get('type') == 'answer':
+                                answers = [r.get('text')] + r.get('related_answers', [])
+                            else:
+                                q_text = r.get('text')
+
+                            try:
+                                log_entry = {
+                                    'entity': ent_text,
+                                    'match_id': r.get('id'),
+                                    'score': r.get('score'),
+                                    'question': q_text,
+                                    'answers': answers,
+                                    'text_snippet': (r.get('text') or '')[:400],
+                                    'metadata': md
+                                }
+                                logger.info("实体检索命中详情: " + json.dumps(log_entry, ensure_ascii=False))
+                            except Exception:
+                                logger.info(f"实体检索命中: entity={ent_text} id={r.get('id')} score={r.get('score')}")
+
+                            entity_matches.append({
+                                'id': r.get('id'),
+                                'score': r.get('score'),
+                                'question': q_text,
+                                'answers': answers,
+                                'text': r.get('text'),
+                                'metadata': md
+                            })
+
+                        entity_vector_matches[ent_text] = entity_matches
+                    except Exception as e:
+                        logger.error(f"实体检索失败 for {ent_text}: {e}")
+
+                    # 将检索证据发回大模型，要求返回该实体在跨境传输时是否存在泄露风险并给出理由（严格 JSON）
+                    try:
+                        from .deepseek_client import deepseek_detect
+
+                        evidence_snippets = "\n".join([(m.get('text') or '')[:1000] for m in entity_matches]) if entity_matches else ''
+                        assess_prompt = (
+                            '请仅返回严格 JSON，对下面的单条实体与其检索到的证据，给出跨境传输泄露风险判断（risk: 高|中|低|未知）和简短理由。'
+                            + '\n\n格式: {"entity":"...","risk":"高|中|低|未知","reason":"简短理由，引用证据或规则"}\n\n'
+                            + f'实体: {ent_text}\n证据片段:\n{evidence_snippets}'
+                        )
+
+                        assess_result = deepseek_detect(ent_text, knowledge_base_prompt=assess_prompt)
+                        logger.info(f"实体评估 llm 返回: {assess_result}")
+
+                        # 解析评估结果
+                        if isinstance(assess_result, dict):
+                            # 如果直接返回 risk/ reason 字段
+                            risk = assess_result.get('risk') or assess_result.get('risk_level') or assess_result.get('level')
+                            reason = assess_result.get('reason') or assess_result.get('explanation') or assess_result.get('detail')
+                            if not risk and 'summary' in assess_result:
+                                # 兼容更复杂结构
+                                try:
+                                    risk = assess_result.get('summary', {}).get('risk_level')
+                                except Exception:
+                                    risk = None
+
+                            entity_assessments[ent_text] = {
+                                'risk': risk or '未知',
+                                'reason': reason or (assess_result.get('content') if isinstance(assess_result.get('content'), str) else str(assess_result))
+                            }
+                        elif isinstance(assess_result, str):
+                            # 尝试解析为 JSON
+                            try:
+                                parsed = json.loads(assess_result)
+                                entity_assessments[ent_text] = {
+                                    'risk': parsed.get('risk') or parsed.get('risk_level') or '未知',
+                                    'reason': parsed.get('reason') or parsed.get('explanation') or ''
+                                }
+                            except Exception:
+                                entity_assessments[ent_text] = {'risk': '未知', 'reason': str(assess_result)[:1000]}
+                    except Exception as e:
+                        logger.error(f"实体评估失败 for {ent_text}: {e}")
+                        entity_assessments[ent_text] = {'risk': '未知', 'reason': str(e)}
+        except Exception as e:
+            logger.error(f"逐实体检索过程出错: {e}")
+
+
+
+        # 保存检测结果到数据库
         record = PiiDetectionRecord.objects.create(
-            text=extracted_text,
-            detected_entities=result.get("entities", []),
-            risk_level=result.get("risk_level", "未知")
+            text=normalized_text,
+            detected_entities=entities_output,
+            risk_level=risk_level,
+            entity_assessments=entity_assessments
         )
         serializer = PiiDetectionRecordSerializer(record)
-        # 返回原文内容，便于前端展示
-        # 直接返回 deepseek summary 字段内容，全部顶层展开
-        from .knowledge_lookup import find_knowledge_explanation
-        summary = result.get("summary", {})
-        overall_reason = summary.get("overall_reason", "")
-        knowledge_explanation = find_knowledge_explanation(overall_reason)
+
+        # 返回原文内容及向量检索结果，便于前端展示和调试
+        response_text = extracted_text or normalized_text or ""
+
+        # 包含逐实体的向量检索命中结果，便于前端展示每条实体的命中问题/答案
         return Response({
-            "summary": summary,
-            "details": result.get("details", []),
-            "text": extracted_text,
-            "tokens": tokens  # 返回tokens信息（如果有）
+            "text": response_text,
+            "entities": normalized_entities,
+            "risk_level": risk_level,
+            "vector_matches": vector_matches,
+            "entity_vector_matches": entity_vector_matches,
+            "entity_assessments": entity_assessments
         }, status=status.HTTP_201_CREATED)

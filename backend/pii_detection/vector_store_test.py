@@ -4,6 +4,8 @@ from typing import List, Dict, Any
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from pathlib import Path
+from django.conf import settings
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,13 +17,48 @@ class VectorSearcher:
                  model_name: str = 'shibing624/text2vec-base-chinese'):
         """初始化向量搜索器"""
         self.model = SentenceTransformer(model_name)
-        self.index = self._load_index(index_path)
-        self.metadata = self._load_metadata(metadata_path)
+        # Resolve relative paths against Django BASE_DIR to get absolute paths inside container
+        try:
+            base_dir = Path(settings.BASE_DIR)
+        except Exception:
+            base_dir = Path(__file__).resolve().parents[2]
+
+        # project root is parent of backend (BASE_DIR points to backend/)
+        project_root = base_dir.parent
+
+        def resolve_path(p: str) -> Path:
+            p = str(p)
+            # if caller passed a path starting with 'backend/', strip it because files live at project root
+            if p.startswith('backend/'):  # avoid backend/backend/... when joining
+                p = p[len('backend/') :]
+            path = Path(p)
+            if not path.is_absolute():
+                candidate = project_root / path
+                # if the candidate doesn't exist, try a few common alternative locations
+                if not candidate.exists():
+                    # search for a file with same name under project_root
+                    try:
+                        matches = list(project_root.rglob(path.name))
+                        if matches:
+                            return matches[0]
+                    except Exception:
+                        pass
+                return candidate
+            return path
+
+        self.index_path = resolve_path(index_path)
+        self.metadata_path = resolve_path(metadata_path)
+
+        self.index = self._load_index(str(self.index_path))
+        self.metadata = self._load_metadata(str(self.metadata_path))
 
     def _load_index(self, index_path: str) -> faiss.Index:
         """加载FAISS索引"""
         try:
-            return faiss.read_index(index_path)
+            p = Path(index_path)
+            if not p.exists():
+                raise FileNotFoundError(f"FAISS index not found at: {index_path}")
+            return faiss.read_index(str(p))
         except Exception as e:
             logger.error(f"加载索引失败: {e}")
             raise
@@ -29,13 +66,16 @@ class VectorSearcher:
     def _load_metadata(self, metadata_path: str) -> Dict[str, Any]:
         """加载元数据"""
         try:
-            with open(metadata_path, 'r', encoding='utf-8') as f:
+            p = Path(metadata_path)
+            if not p.exists():
+                raise FileNotFoundError(f"Metadata file not found at: {metadata_path}")
+            with open(str(p), 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception as e:
             logger.error(f"加载元数据失败: {e}")
             raise
 
-    def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    def search(self, query: str, top_k: int = 1) -> List[Dict[str, Any]]:
         """搜索最相似的文本和相关答案"""
         try:
             # 将查询文本转换为向量

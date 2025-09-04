@@ -25,10 +25,10 @@ def process_tokens_with_pipeline(tokens):
     """
     try:
         # 获取识别器（使用LLM规则）
-        recognizer = LLMRecognizer()
+        #recognizer = LLMRecognizer()
 
         # 调用识别器处理tokens
-        entities = call_recognizer(recognizer, tokens)
+        #entities = call_recognizer(recognizer, tokens)
         #logger.info(f"LLM识别出的实体: {entities}")
 
         # 拼接文本
@@ -41,7 +41,7 @@ def process_tokens_with_pipeline(tokens):
             "entities": entities
         }
 
-        #logger.info(f"中间层处理完成: {result}")
+        logger.info(f"中间层处理完成: {result}")
         return result
     except Exception as e:
         # 出错时返回原始文本

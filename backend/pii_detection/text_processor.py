@@ -26,7 +26,7 @@ class TextProcessingTools:
         # 初始化LTP和spaCy PhraseMatcher
         try:
             from ltp import LTP
-            self.ltp = LTP()
+            self.ltp = LTP()  # 使用默认模型
             self.ltp_available = True
             logger.info("✅ LTP 初始化成功")
         except (ImportError, Exception) as e:
@@ -625,13 +625,22 @@ class TextProcessor:
         """
         对单个句子进行分词 - 使用LTP分词
         """
+        # 检查 LTP 是否可用
+        if not self.text_tools.ltp_available:
+            logger.error("LTP 未正确初始化，无法进行分词")
+            return sentence.split()  # 降级为简单空格分词
+            
         # 使用空格作为硬切分边界：先按空格切段，再分别用LTP分词
         parts = [p for p in re.split(r'\s+', sentence.strip()) if p]
         if not parts:
             return []
 
-        ltp_result = self.text_tools.ltp.pipeline(parts, tasks=["cws"])
-        parts_cws = ltp_result.cws if hasattr(ltp_result, 'cws') else ltp_result['cws']
+        try:
+            ltp_result = self.text_tools.ltp.pipeline(parts, tasks=["cws"])
+            parts_cws = ltp_result.cws if hasattr(ltp_result, 'cws') else ltp_result['cws']
+        except Exception as e:
+            logger.error(f"LTP 分词失败: {e}")
+            return sentence.split()  # 降级为简单空格分词
 
         tokens = []
         for seg_tokens in parts_cws:
