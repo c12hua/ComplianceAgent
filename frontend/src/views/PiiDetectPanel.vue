@@ -174,9 +174,12 @@
                         </button>
                       </div>
                       <div v-if="detail._showMatches" class="matches-list">
-                        <div v-for="(m, mi) in detail.matches" :key="mi" class="match-item">
-                          <div class="match-score">分数: {{ m.score }}</div>
-                          <div class="match-snippet">{{ m.text_snippet || m.snippet || m.answer || m.related_text }}</div>
+                        <div v-for="(m, mi) in detail.matches.slice(0,2)" :key="mi" class="match-item">
+                          <div class="match-snippet">{{ m.text_snippet || m.snippet || m.answer || m.related_text || '（无摘录）' }}</div>
+                          <div class="match-meta">
+                            <span class="match-source">来源: {{ getMatchSource(m) }}</span>
+                            <span class="match-score">分数: {{ m.score }}</span>
+                          </div>
                           <div class="match-related" v-if="m.related_answers">相关回答: {{ m.related_answers.join(' | ') }}</div>
                         </div>
                       </div>
@@ -469,8 +472,19 @@ const initDetailFlags = (details) => {
   for (const d of details) {
     if (d._showMatches === undefined) d._showMatches = false
     if (!Array.isArray(d.matches)) d.matches = []
+    // cap to top-2 matches for display
+    if (d.matches.length > 2) d.matches = d.matches.slice(0, 2)
   }
   return details
+}
+
+// Extract a readable source/filename from a match metadata object
+const getMatchSource = (m) => {
+  if (!m) return '未知来源'
+  const md = m.metadata || m.meta || m.source || {}
+  if (typeof md === 'string') return md
+  // common fields: filename, source, doc, path
+  return md.filename || md.file || md.source || md.doc || md.path || '未知来源'
 }
 </script>
 
@@ -860,6 +874,45 @@ const initDetailFlags = (details) => {
   padding: 1rem;
   border-radius: 0.75rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.matches-section {
+  margin-top: 1rem;
+}
+.matches-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.match-item {
+  padding: 0.75rem;
+  border-radius: 0.6rem;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.match-snippet {
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+.match-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+.match-source { font-weight: 600; }
+.match-score { color: #9ca3af }
+.toggle-matches {
+  background: transparent;
+  border: none;
+  color: #3b82f6;
+  cursor: pointer;
 }
 
 /* 文本内容样式 */

@@ -1,0 +1,938 @@
+[
+  {
+    "rule_id": "CN_PIPL_Art28_001",
+    "region": "CN",
+    "rule_text": "医疗健康信息（如住院病历）被定义为敏感个人信息，泄露或非法使用易危害人身权益。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.95,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_002",
+    "region": "CN",
+    "rule_text": "体检报告作为医疗健康信息中的健康状况信息，被认定为敏感个人信息，受保护规则约束。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_CSSPG_001",
+    "region": "CN",
+    "rule_text": "血型信息若未与疾病或医疗就诊相关联，不属于敏感个人信息范畴。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.20,
+    "metadata": {
+      "source": "《网络安全标准实践指南 — 敏感个人信息识别指南》注 5",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_003",
+    "region": "CN",
+    "rule_text": "疫苗接种记录属于医疗健康信息中的健康状况信息，视为敏感个人信息，需遵循保护规则。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_004",
+    "region": "CN",
+    "rule_text": "过敏史信息作为医疗健康信息，属于敏感个人信息，泄露或非法使用易危害人身安全。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.93,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_005",
+    "region": "CN",
+    "rule_text": "家族病史信息作为医疗健康信息，视为敏感个人信息，受保护规则约束。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.91,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_006",
+    "region": "CN",
+    "rule_text": "康复治疗记录作为医疗健康信息，属于敏感个人信息，需按保护规则处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_007",
+    "region": "CN",
+    "rule_text": "挂号记录主要包含身份及预约信息，未被明确列为敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.30,
+    "metadata": {
+      "source": "《个人信息保护法》、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_008",
+    "region": "CN",
+    "rule_text": "用药记录作为医疗健康信息中的就诊记录，属于敏感个人信息，需遵循保护规则。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_009",
+    "region": "CN",
+    "rule_text": "医保报销明细主要为费用结算信息，未被明确列为敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.25,
+    "metadata": {
+      "source": "《个人信息保护法》、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_010",
+    "region": "CN",
+    "rule_text": "营养评估报告作为医疗健康信息中的健康状况信息，属于敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_011",
+    "region": "CN",
+    "rule_text": "心理健康评估记录作为医疗健康信息，属于敏感个人信息，泄露易侵害人格尊严。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_012",
+    "region": "CN",
+    "rule_text": "康复训练计划作为医疗健康信息中的康复记录，属于敏感个人信息，需按保护规则处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_013",
+    "region": "CN",
+    "rule_text": "就诊费用清单主要为费用结算信息，未被明确列为敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.25,
+    "metadata": {
+      "source": "《个人信息保护法》、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_014",
+    "region": "CN",
+    "rule_text": "出院小结作为医疗健康信息中的就诊记录，属于敏感个人信息，需遵循保护规则。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_015",
+    "region": "CN",
+    "rule_text": "睡眠监测报告作为医疗健康信息中的健康状况信息，属于敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_016",
+    "region": "CN",
+    "rule_text": "运动功能评估记录作为医疗健康信息，属于敏感个人信息，需按保护规则处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_017",
+    "region": "CN",
+    "rule_text": "膳食建议记录若与疾病治疗或健康干预相关，属于敏感个人信息，受保护规则约束。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.88,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_018",
+    "region": "CN",
+    "rule_text": "健康风险评估报告作为医疗健康信息，属于敏感个人信息，泄露易危害人身权益。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.93,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_019",
+    "region": "CN",
+    "rule_text": "疾病筛查结果作为医疗健康信息中的健康状况信息，属于敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_020",
+    "region": "CN",
+    "rule_text": "康复进展记录作为医疗健康信息中的康复记录，属于敏感个人信息，需按保护规则处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_021",
+    "region": "CN",
+    "rule_text": "体检预约信息主要为预约安排信息，未被明确列为敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.25,
+    "metadata": {
+      "source": "《个人信息保护法》、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_022",
+    "region": "CN",
+    "rule_text": "医疗费用支付方式信息未直接归入敏感个人信息，但若关联金融账户核心信息则需按敏感信息处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.40,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_023",
+    "region": "CN",
+    "rule_text": "随访记录作为医疗健康信息，属于敏感个人信息，受保护规则约束。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_024",
+    "region": "CN",
+    "rule_text": "急救记录作为医疗健康信息中的就诊记录，属于敏感个人信息，需遵循保护规则。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_025",
+    "region": "CN",
+    "rule_text": "医疗投诉记录主要为服务反馈信息，未被明确列为敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.25,
+    "metadata": {
+      "source": "《个人信息保护法》、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_026",
+    "region": "CN",
+    "rule_text": "康复器械使用记录作为医疗健康信息中的康复记录，属于敏感个人信息，需按保护规则处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_027",
+    "region": "CN",
+    "rule_text": "远程医疗咨询记录作为医疗健康信息中的就诊记录，属于敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_028",
+    "region": "CN",
+    "rule_text": "健康管理档案中的基础身份信息未被列为敏感个人信息，但若包含医疗健康核心内容则需按敏感信息处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.40,
+    "metadata": {
+      "source": "《个人信息保护法》、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_029",
+    "region": "CN",
+    "rule_text": "特殊医疗需求记录作为医疗健康信息，属于敏感个人信息，需遵循保护规则。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.90,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_030",
+    "region": "CN",
+    "rule_text": "医疗服务满意度调查记录主要为服务评价信息，未被明确列为敏感个人信息。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.25,
+    "metadata": {
+      "source": "《个人信息保护法》、《网络安全标准实践指南 — 敏感个人信息识别指南》",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_PIPL_Art28_031",
+    "region": "CN",
+    "rule_text": "医疗互助申请记录若涉及健康状况等医疗信息，属于敏感个人信息，需按保护规则处理。",
+    "rule_category": "数据保护",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.88,
+    "metadata": {
+      "source": "《个人信息保护法》第二十八条、《网络安全标准实践指南 — 敏感个人信息识别指南》附录 A",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_001",
+    "region": "CN",
+    "rule_text": "基因测序数据（如全基因组、转录组）属于4级个人健康状况数据，跨境共享需国家审批和匿名化处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.98,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_002",
+    "region": "CN",
+    "rule_text": "可穿戴设备采集的实时心率、血氧数据属4级数据，跨境回传需个人信息保护影响评估和加密。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》第3.1条、附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_003",
+    "region": "CN",
+    "rule_text": "医保编号、保险金额、理赔记录属4级数据，跨境保险业务需单独同意和Token化处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_004",
+    "region": "CN",
+    "rule_text": "医院基本数据（如名称、床位数、地址）属1级公开数据，可跨境发布但不得含个人标识。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.20,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_005",
+    "region": "CN",
+    "rule_text": "传染病疫情监测个案数据属4级，跨境通报需K-匿名化并由国家疾控中心统一处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.95,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_006",
+    "region": "CN",
+    "rule_text": "面部特征、指纹等生物识别信息属4级，跨境核验需联邦学习或多方安全计算避免原始数据出境。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.97,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_007",
+    "region": "CN",
+    "rule_text": "医院内消费金额、交易记录属3级，跨境医疗旅游结算需单独同意和PCI-DSS认证。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_008",
+    "region": "CN",
+    "rule_text": "检验检查报告（含定量结果、影像）属3级，跨境远程会诊需假名化ID和水印处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.75,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_009",
+    "region": "CN",
+    "rule_text": "用药信息（剂量、途径、频次）属2级，跨境药物警戒上报需假名化和SFTP加密传输。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.60,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_010",
+    "region": "CN",
+    "rule_text": "家庭住址、联系电话属4级，跨境临床试验随访需中心化随机化系统和本地化存储。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_011",
+    "region": "CN",
+    "rule_text": "手术过程描述、手术视频属3级，跨境医学教育需书面同意和面部打码处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.75,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_012",
+    "region": "CN",
+    "rule_text": "出生日期、年龄信息属4级，跨境人群队列研究需偏移日期和年龄分段处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_013",
+    "region": "CN",
+    "rule_text": "过敏史、过敏原详情属4级，跨境电子处方流转需去标识和mTLS认证。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.93,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_014",
+    "region": "CN",
+    "rule_text": "血型、RH因子属4级，跨境血液中心合作需哈希化处理和ISO 15189认证。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_015",
+    "region": "CN",
+    "rule_text": "体检报告（血压、肺活量）属4级，跨境健康管理APP同步需明示同意和AES-256加密。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_016",
+    "region": "CN",
+    "rule_text": "职业、工作单位信息属4级，跨境职业健康监测需假名化和VPN加密。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_017",
+    "region": "CN",
+    "rule_text": "家族病史（遗传病信息）属4级，跨境保险核保需单独书面授权和数据摘要处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_018",
+    "region": "CN",
+    "rule_text": "影像DICOM文件中的面部图像属4级，跨境AI影像诊断需去除面部区域和标识符。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.95,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_019",
+    "region": "CN",
+    "rule_text": "支付卡号、交易流水属3级，跨境医疗电商需符合PCI-DSS Level 1和Tokenization。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_020",
+    "region": "CN",
+    "rule_text": "住院号、门诊号属4级，跨境科研数据库需SHA-256哈希化处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_021",
+    "region": "CN",
+    "rule_text": "疫苗接种个案记录属4级，跨境免疫证明需脱敏后通过DDCC网关互认。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_022",
+    "region": "CN",
+    "rule_text": "出院小结中的诊断编码（ICD-10）属3级，跨境DRG结算需移除患者标识。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.75,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_023",
+    "region": "CN",
+    "rule_text": "护理记录中的生命体征属3级，跨境远程监护需DTLS 1.3加密传输。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_024",
+    "region": "CN",
+    "rule_text": "知情告知书签字扫描件属3级，跨境法律诉讼需公证和司法级加密传输。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_025",
+    "region": "CN",
+    "rule_text": "转诊记录中的目的地医院信息属3级，跨境转诊调度需最小化数据和VPN传输。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_026",
+    "region": "CN",
+    "rule_text": "麻醉记录中的用药剂量属3级，跨境质量控制需标准化剂量和去标识处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_027",
+    "region": "CN",
+    "rule_text": "输血记录中的血型、供者编号属3级，跨境血库联网需GTIN编码和区间化处理。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_028",
+    "region": "CN",
+    "rule_text": "病程记录中的医生签名图像属3级，跨境AI病历质控需OCR删除签名和同态加密。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_029",
+    "region": "CN",
+    "rule_text": "出生死亡数据统计级属1级，可公开跨境报告，不含个体标识。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.20,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_030",
+    "region": "CN",
+    "rule_text": "检查检验项目代码（LOINC）属3级，跨境医学研究需去标识和限制二次使用。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_031",
+    "region": "CN",
+    "rule_text": "诊疗费用分类代码（收费项目）属3级，跨境医保反欺诈需哈希聚合和区块链时间戳。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_032",
+    "region": "CN",
+    "rule_text": "个人通讯信息（邮箱、手机号）属4级，跨境满意度调查需匿名问卷和加密网关。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_033",
+    "region": "CN",
+    "rule_text": "个人生物识别信息（虹膜、指纹）属4级，跨境身份核验需ISO/IEC 19794-2模板和AES-256加密。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.97,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_034",
+    "region": "CN",
+    "rule_text": "个人信用记录（医保信用分）属4级，跨境保险风控需调用风险等级和记录调用日志。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.94,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_035",
+    "region": "CN",
+    "rule_text": "生活方式（吸烟、饮酒）属4级，跨境慢病管理APP需AES-256加密和零知识架构。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.92,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_036",
+    "region": "CN",
+    "rule_text": "医院人力资源数据（医生姓名、岗位）属3级，跨境共享需哈希化和IAM系统授权。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_037",
+    "region": "CN",
+    "rule_text": "医院财务数据（收入、支出）属3级，跨境审计需区间化和虚拟数据室访问。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_038",
+    "region": "CN",
+    "rule_text": "医院物资数据（药品批次）属3级，跨境供应链管理需GS1 EPCIS标准和TLS1.3加密。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_039",
+    "region": "CN",
+    "rule_text": "医院后勤数据（能耗、维修记录）属3级，统计后可降为1级公开跨境绿色认证。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  },
+  {
+    "rule_id": "CN_GDHMD_040",
+    "region": "CN",
+    "rule_text": "医院基础运行数据（服务器日志）属3级，跨境运维需堡垒机审计和AES-256加密。",
+    "rule_category": "医疗数据",
+    "jurisdiction_scope": ["CN"],
+    "sensitivity_score": 0.70,
+    "metadata": {
+      "source": "《广东省健康医疗数据安全分类分级管理技术规范》附录A、B",
+      "issue_date": "2025-09-08",
+      "revision_history": []
+    }
+  }
+]

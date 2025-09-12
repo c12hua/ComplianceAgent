@@ -134,7 +134,23 @@ class VectorSearcher:
                         'related_answers': related_answers
                     }
                     results.append(result)
-            
+            # 确保返回结果按“最相关在前”的顺序：
+            # - 如果索引使用 L2 距离，score 是距离，值越小越相关 -> 升序
+            # - 如果索引使用内积/相似度，score 值越大越相关 -> 降序
+            try:
+                metric = None
+                if hasattr(self.index, 'metric_type'):
+                    metric = self.index.metric_type
+                # faiss 常量：faiss.METRIC_L2, faiss.METRIC_INNER_PRODUCT
+                if metric == faiss.METRIC_L2:
+                    results.sort(key=lambda r: r.get('score', 0))
+                else:
+                    # 默认把大分数视为更相关
+                    results.sort(key=lambda r: r.get('score', 0), reverse=True)
+            except Exception:
+                # 任何异常时保证返回为降序（更大的更靠前）作为后备
+                results.sort(key=lambda r: r.get('score', 0), reverse=True)
+
             return results
         except Exception as e:
             logger.error(f"搜索失败: {e}")
