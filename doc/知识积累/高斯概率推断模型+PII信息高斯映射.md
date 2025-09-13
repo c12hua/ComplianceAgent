@@ -68,8 +68,7 @@
   - KL 散度: `D_KL(Posterior || Prior)`
   - 互信息: `I(S;O)`
   - 条件互信息: `I(S;O|K)`（边际风险）
-  - 论文中的定义：
-    令 $\begin{bmatrix} P \\ Q \end{bmatrix}^T \sim \mathcal{N}(\mu, \Sigma)$.
+  - 论文中的定义：令 $\begin{bmatrix} P \\ Q \end{bmatrix}^T \sim \mathcal{N}(\mu, \Sigma)$.
     $$
     \text{KL}(P , Q) = \log_2 \left( \frac{ \Sigma_{[Q,Q]} ^ {1/2}}{ \Sigma_{[P,P]} ^ {1/2}} \right) + \frac{( \Sigma_{[P,P]} + ( \mu_P - \mu_Q) ^ 2)}{ 2 \Sigma_{[Q,Q]}} - \frac{1}{2}
     $$
@@ -93,3 +92,4 @@
 - 对比：
   - 无保护：后验分布大幅收缩
   - 有 DP：后验 ~ 先验，风险降低
+
